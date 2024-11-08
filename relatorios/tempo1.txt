@@ -1,0 +1,7 @@
+Total density after 100 timesteps: 140876
+
+     146.790413000 seconds user
+       0.030003000 seconds sys
+     146.790413000 seconds user
+       0.030003000 seconds sys
+       0.030003000 seconds sys

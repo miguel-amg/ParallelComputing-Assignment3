@@ -14,6 +14,8 @@
 // Add sources (density or velocity)
 void add_source(int M, int N, int O, float *x, float *s, float dt) {
   int size = (M + 2) * (N + 2) * (O + 2);
+  
+  #pragma omp parallel for
   for (int i = 0; i < size; i++) {
     x[i] += dt * s[i];
   }
@@ -24,24 +26,30 @@ void set_bnd(int M, int N, int O, int b, float *x) {
   int i, j;
 
   // Set boundary on faces
-  for (i = 1; i <= M; i++) {
-    for (j = 1; j <= N; j++) {
-      x[IX(i, j, 0)] = b == 3 ? -x[IX(i, j, 1)] : x[IX(i, j, 1)];
-      x[IX(i, j, O + 1)] = b == 3 ? -x[IX(i, j, O)] : x[IX(i, j, O)];
+  #pragma omp parallel 
+  {
+    #pragma omp for private(i, j)
+    for (i = 1; i <= M; i++) {
+      for (j = 1; j <= N; j++) {
+        x[IX(i, j, 0)] = b == 3 ? -x[IX(i, j, 1)] : x[IX(i, j, 1)];
+        x[IX(i, j, O + 1)] = b == 3 ? -x[IX(i, j, O)] : x[IX(i, j, O)];
+      }
     }
-  }
 
-  for (i = 1; i <= N; i++) {
-    for (j = 1; j <= O; j++) {
-      x[IX(0, i, j)] = b == 1 ? -x[IX(1, i, j)] : x[IX(1, i, j)];
-      x[IX(M + 1, i, j)] = b == 1 ? -x[IX(M, i, j)] : x[IX(M, i, j)];
+    #pragma omp for private(i, j)
+    for (i = 1; i <= N; i++) {
+      for (j = 1; j <= O; j++) {
+        x[IX(0, i, j)] = b == 1 ? -x[IX(1, i, j)] : x[IX(1, i, j)];
+        x[IX(M + 1, i, j)] = b == 1 ? -x[IX(M, i, j)] : x[IX(M, i, j)];
+      }
     }
-  }
-  
-  for (i = 1; i <= M; i++) {
-    for (j = 1; j <= O; j++) {
-      x[IX(i, 0, j)] = b == 2 ? -x[IX(i, 1, j)] : x[IX(i, 1, j)];
-      x[IX(i, N + 1, j)] = b == 2 ? -x[IX(i, N, j)] : x[IX(i, N, j)];
+    
+    #pragma omp for private(i, j)
+    for (i = 1; i <= M; i++) {
+      for (j = 1; j <= O; j++) {
+        x[IX(i, 0, j)] = b == 2 ? -x[IX(i, 1, j)] : x[IX(i, 1, j)];
+        x[IX(i, N + 1, j)] = b == 2 ? -x[IX(i, N, j)] : x[IX(i, N, j)];
+      }
     }
   }
 
@@ -62,6 +70,7 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
     
     do {
         max_c = 0.0f;
+        #pragma omp parallel for reduction(max: max_c) private(old_x, change)
         for (int i = 1; i <= M; i++) {
             for (int j = 1; j <= N; j++) {
                  for (int k = 1 + (i+j)%2; k <= O; k+=2) {
@@ -76,6 +85,7 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
             }
         }
         
+        #pragma omp parallel for reduction(max: max_c) private(old_x, change)
         for (int i = 1; i <= M; i++) {
             for (int j = 1; j <= N; j++) {
                 for (int k = 1 + (i+j+1)%2; k <= O; k+=2) {
