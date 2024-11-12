@@ -1,0 +1,49 @@
+Versão do Pedro mas com o red-black solver
+
+```
+srun: job 483048 queued and waiting for resources
+srun: job 483048 has been allocated resources
+Total density after 100 timesteps: 140880
+
+ Performance counter stats for './fluid_sim':
+
+          31012.28 msec task-clock                #    1.000 CPUs utilized
+                17      context-switches          #    0.001 K/sec
+                 0      cpu-migrations            #    0.000 K/sec
+             11583      page-faults               #    0.373 K/sec
+       89937818485      cycles                    #    2.900 GHz
+       60332548190      stalled-cycles-frontend   #   67.08% frontend cycles idle
+      100110941489      instructions              #    1.11  insn per cycle
+                                                  #    0.60  stalled cycles per insn
+        4068991862      branches                  #  131.206 M/sec
+          85451996      branch-misses             #    2.10% of all branches
+
+      31.025030987 seconds time elapsed
+
+      31.000937000 seconds user
+       0.012000000 seconds sys
+```
+
+# Com otimização do lin solve
+
+```
+Total density after 100 timesteps: 140880
+
+ Performance counter stats for './fluid_sim':
+
+         105795.03 msec task-clock                #    6.091 CPUs utilized
+              2836      context-switches          #    0.027 K/sec
+                23      cpu-migrations            #    0.000 K/sec
+             29970      page-faults               #    0.283 K/sec
+      302385864972      cycles                    #    2.858 GHz
+      250171627521      stalled-cycles-frontend   #   82.73% frontend cycles idle
+      120394222368      instructions              #    0.40  insn per cycle
+                                                  #    2.08  stalled cycles per insn
+        9987184648      branches                  #   94.401 M/sec
+          90344554      branch-misses             #    0.90% of all branches
+
+      17.369768280 seconds time elapsed
+
+     105.800604000 seconds user
+       0.081010000 seconds sys
+```

@@ -7,5 +7,5 @@ export OMP_NUM_THREADS=8
 echo ------------ A compilar programa ------------ 
 make
 echo ------------ A enviar programa ------------ 
-echo A executar...
-srun --partition=cpar --cpus-per-task=8 --exclusive ./fluid_sim
+echo A executar para 8 threads e em 1 processo...
+srun --partition=cpar --ntasks=1 --cpus-per-task=8 --exclusive ./fluid_sim

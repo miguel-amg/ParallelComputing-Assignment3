@@ -1,18 +1,14 @@
-CPP = g++ -Wall -fopenmp
+CPP = g++ -Wall -O3 -Ofast -pg -fopenmp
 SRCS = main.cpp fluid_solver.cpp EventManager.cpp
+TARGET= ../fluid_sim
 
-all: phase2
-
-phase2:
+all:
 	$(CPP) $(SRCS) -o fluid_sim
 
+assembly:
+	$(CPP) -S $(SRCS)
+	
 clean:
 	@echo Cleaning up...
-	@rm fluid
+	@rm -f ../fluid_sim
 	@echo Done.
-
-runseq:
-	./fluid_sim_seq
-
-runpar:
-	./fluid_sim

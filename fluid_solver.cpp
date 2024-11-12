@@ -1,6 +1,5 @@
 #include "fluid_solver.h"
 #include <cmath>
-#include <string.h>
 
 #define IX(i, j, k) ((i) + (M + 2) * (j) + (M + 2) * (N + 2) * (k))
 #define SWAP(x0, x)                                                            \
@@ -15,6 +14,8 @@
 // Add sources (density or velocity)
 void add_source(int M, int N, int O, float *x, float *s, float dt) {
   int size = (M + 2) * (N + 2) * (O + 2);
+  
+  #pragma omp parallel for
   for (int i = 0; i < size; i++) {
     x[i] += dt * s[i];
   }
@@ -25,22 +26,30 @@ void set_bnd(int M, int N, int O, int b, float *x) {
   int i, j;
 
   // Set boundary on faces
-  for (i = 1; i <= M; i++) {
-    for (j = 1; j <= N; j++) {
-      x[IX(i, j, 0)] = b == 3 ? -x[IX(i, j, 1)] : x[IX(i, j, 1)];
-      x[IX(i, j, O + 1)] = b == 3 ? -x[IX(i, j, O)] : x[IX(i, j, O)];
+  #pragma omp parallel 
+  {
+    #pragma omp for private(i, j) // O valor do i é distribuido pelas threads, o valor do j tem de ser privado para as threads não alterarem o valor de j umas as outras
+    for (i = 1; i <= M; i++) {
+      for (j = 1; j <= N; j++) {
+        x[IX(i, j, 0)] = b == 3 ? -x[IX(i, j, 1)] : x[IX(i, j, 1)];
+        x[IX(i, j, O + 1)] = b == 3 ? -x[IX(i, j, O)] : x[IX(i, j, O)];
+      }
     }
-  }
-  for (i = 1; i <= N; i++) {
-    for (j = 1; j <= O; j++) {
-      x[IX(0, i, j)] = b == 1 ? -x[IX(1, i, j)] : x[IX(1, i, j)];
-      x[IX(M + 1, i, j)] = b == 1 ? -x[IX(M, i, j)] : x[IX(M, i, j)];
+
+    #pragma omp for private(i, j)
+    for (i = 1; i <= N; i++) {
+      for (j = 1; j <= O; j++) {
+        x[IX(0, i, j)] = b == 1 ? -x[IX(1, i, j)] : x[IX(1, i, j)];
+        x[IX(M + 1, i, j)] = b == 1 ? -x[IX(M, i, j)] : x[IX(M, i, j)];
+      }
     }
-  }
-  for (i = 1; i <= M; i++) {
-    for (j = 1; j <= O; j++) {
-      x[IX(i, 0, j)] = b == 2 ? -x[IX(i, 1, j)] : x[IX(i, 1, j)];
-      x[IX(i, N + 1, j)] = b == 2 ? -x[IX(i, N, j)] : x[IX(i, N, j)];
+    
+    #pragma omp for private(i, j)
+    for (i = 1; i <= M; i++) {
+      for (j = 1; j <= O; j++) {
+        x[IX(i, 0, j)] = b == 2 ? -x[IX(i, 1, j)] : x[IX(i, 1, j)];
+        x[IX(i, N + 1, j)] = b == 2 ? -x[IX(i, N, j)] : x[IX(i, N, j)];
+      }
     }
   }
 
@@ -54,7 +63,6 @@ void set_bnd(int M, int N, int O, int b, float *x) {
                                     x[IX(M + 1, N + 1, 1)]);
 }
 
-// NOVO SOLVER
 // red-black solver with convergence check
 void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c) {
     float tol = 1e-7, max_c, old_x, change;
@@ -62,7 +70,9 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
     
     do {
         max_c = 0.0f;
-        #pragma omp parallel for reduction(max:max_c) private(old_x, change)
+        
+        // Reduction max porque queremos que o max_c seja maximo no fim do ciclo externo executar, private porque old_x e change foram declarados antes e vão ser alterados
+        #pragma omp parallel for reduction(max: max_c) private(old_x, change)
         for (int i = 1; i <= M; i++) {
             for (int j = 1; j <= N; j++) {
                  for (int k = 1 + (i+j)%2; k <= O; k+=2) {
@@ -77,7 +87,7 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
             }
         }
         
-        #pragma omp parallel for reduction(max:max_c) private(old_x, change)
+        #pragma omp parallel for reduction(max: max_c) private(old_x, change)
         for (int i = 1; i <= M; i++) {
             for (int j = 1; j <= N; j++) {
                 for (int k = 1 + (i+j+1)%2; k <= O; k+=2) {
@@ -95,6 +105,7 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
     } while (max_c > tol && ++l < 20);
 }
 
+
 // Diffusion step (uses implicit method)
 void diffuse(int M, int N, int O, int b, float *x, float *x0, float diff,
              float dt) {
@@ -106,23 +117,14 @@ void diffuse(int M, int N, int O, int b, float *x, float *x0, float diff,
 // Advection step (uses velocity field to move quantities)
 void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v,
             float *w, float dt) {
-  float dtX = dt * M;
-  float dtY = dt * N;
-  float dtZ = dt * O;
+  float dtX = dt * M, dtY = dt * N, dtZ = dt * O;
 
-
-  for (int k = 1; k <= O; k++) {
+  for (int i = 1; i <= M; i++) {
     for (int j = 1; j <= N; j++) {
-      for (int i = 1; i <= M; i++) {
-        int idx = IX(i, j, k);
-        float u_val = u[idx];
-        float v_val = v[idx];
-        float w_val = w[idx];
-
-        // Cálculo das posições retroativas
-        float x = i - dtX * u_val;
-        float y = j - dtY * v_val;
-        float z = k - dtZ * w_val;
+      for (int k = 1; k <= O; k++) {
+        float x = i - dtX * u[IX(i, j, k)];
+        float y = j - dtY * v[IX(i, j, k)];
+        float z = k - dtZ * w[IX(i, j, k)];
 
         // Clamp to grid boundaries
         if (x < 0.5f)
@@ -161,20 +163,15 @@ void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v,
 // divergence-free)
 void project(int M, int N, int O, float *u, float *v, float *w, float *p,
              float *div) {
-  
-  const float max= -0.5f/MAX(M, MAX(N, O));
-  for (int k = 1; k <= O; k++) {
+  for (int i = 1; i <= M; i++) {
     for (int j = 1; j <= N; j++) {
-      int idx_base = IX(0, j, k);
-      for (int i = 1; i <= M; i++) {
-        int idx = idx_base + i;
-
-        float du=u[idx + 1] - u[idx - 1];
-        float dv= v[idx + (M + 2)] - v[idx - (M + 2)];
-        float dw= w[idx + (M + 2) * (N + 2)] - w[idx - (M + 2) * (N + 2)];
-
-        div[idx]= max * (du + dv + dw);
-        p[idx] = 0;
+      for (int k = 1; k <= O; k++) {
+        div[IX(i, j, k)] =
+            -0.5f *
+            (u[IX(i + 1, j, k)] - u[IX(i - 1, j, k)] + v[IX(i, j + 1, k)] -
+             v[IX(i, j - 1, k)] + w[IX(i, j, k + 1)] - w[IX(i, j, k - 1)]) /
+            MAX(M, MAX(N, O));
+        p[IX(i, j, k)] = 0;
       }
     }
   }
@@ -183,14 +180,12 @@ void project(int M, int N, int O, float *u, float *v, float *w, float *p,
   set_bnd(M, N, O, 0, p);
   lin_solve(M, N, O, 0, p, div, 1, 6);
 
-  for (int k = 1; k <= O; k++) {
+  for (int i = 1; i <= M; i++) {
     for (int j = 1; j <= N; j++) {
-      int idx_base = IX(0, j, k);
-      for (int i = 1; i <= M; i++) {
-        int idx = idx_base + i;
-        u[idx] -= 0.5f * (p[idx + 1] - p[idx - 1]);
-        v[idx] -= 0.5f * (p[idx + (M + 2)] - p[idx - (M + 2)]);
-        w[idx] -= 0.5f * (p[idx + (M + 2) * (N + 2)] - p[idx - (M + 2) * (N + 2)]);
+      for (int k = 1; k <= O; k++) {
+        u[IX(i, j, k)] -= 0.5f * (p[IX(i + 1, j, k)] - p[IX(i - 1, j, k)]);
+        v[IX(i, j, k)] -= 0.5f * (p[IX(i, j + 1, k)] - p[IX(i, j - 1, k)]);
+        w[IX(i, j, k)] -= 0.5f * (p[IX(i, j, k + 1)] - p[IX(i, j, k - 1)]);
       }
     }
   }
