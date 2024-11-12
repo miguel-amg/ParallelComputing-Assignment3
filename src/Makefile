@@ -1,4 +1,4 @@
-CPP = g++ -Wall -O3 -Ofast -pg -fopenmp
+CPP = g++ -Wall -Ofast -funroll-loops -ftree-vectorize -mtune=native -march=native -fopenmp -g -fno-omit-frame-pointer
 SRCS = main.cpp fluid_solver.cpp EventManager.cpp
 TARGET= ../fluid_sim
 
