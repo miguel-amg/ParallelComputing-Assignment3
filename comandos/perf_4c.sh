@@ -8,4 +8,4 @@ echo ------------ A compilar programa ------------
 make
 echo ------------ A enviar programa ------------ 
 echo A executar...
-srun --partition=cpar --cpus-per-task=4 --ntasks=1  --exclusive perf stat ./fluid_sim
+srun --partition=cpar --cpus-per-task=4 --ntasks=1  --exclusive ./fluid_sim

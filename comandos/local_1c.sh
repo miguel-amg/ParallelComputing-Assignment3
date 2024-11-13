@@ -8,4 +8,4 @@ echo
 echo ------------ A compilar programa ------------ 
 make
 echo ------------ A executar programa ------------ 
-OMP_NUM_THREADS=8 ./fluid_sim
+OMP_NUM_THREADS=1 perf stat ./fluid_sim

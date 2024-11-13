@@ -14,7 +14,9 @@
 
 // Add sources (density or velocity)
 void add_source(int M, int N, int O, float *x, float *s, float dt) {
-  int size = (M + 2) * (N + 2) * (O + 2);
+  int size = (M + 2) * (N + 2) * (O + 2);  // ------------------> 84+2 * 84+2 * 84+2 = 422 iterações, como é chamada 3 vezes temos 1266 iterações com esta instrução, paralelizar vai dar um ganho pequeno
+ 
+  #pragma omp parallel for // <---------------------------------------------- ADICIONADO PRAGMA
   for (int i = 0; i < size; i++) {
     x[i] += dt * s[i];
   }
@@ -25,18 +27,23 @@ void set_bnd(int M, int N, int O, int b, float *x) {
   int i, j;
 
   // Set boundary on faces
+  #pragma omp parallel for private(i, j) // <---------------------------------------------- ADICIONADO PRAGMA
   for (i = 1; i <= M; i++) {
     for (j = 1; j <= N; j++) {
       x[IX(i, j, 0)] = b == 3 ? -x[IX(i, j, 1)] : x[IX(i, j, 1)];
       x[IX(i, j, O + 1)] = b == 3 ? -x[IX(i, j, O)] : x[IX(i, j, O)];
     }
   }
+
+  #pragma omp parallel for private(i, j) // <---------------------------------------------- ADICIONADO PRAGMA
   for (i = 1; i <= N; i++) {
     for (j = 1; j <= O; j++) {
       x[IX(0, i, j)] = b == 1 ? -x[IX(1, i, j)] : x[IX(1, i, j)];
       x[IX(M + 1, i, j)] = b == 1 ? -x[IX(M, i, j)] : x[IX(M, i, j)];
     }
   }
+
+  #pragma omp parallel for private(i, j) // <---------------------------------------------- ADICIONADO PRAGMA
   for (i = 1; i <= M; i++) {
     for (j = 1; j <= O; j++) {
       x[IX(i, 0, j)] = b == 2 ? -x[IX(i, 1, j)] : x[IX(i, 1, j)];
@@ -64,6 +71,7 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
         max_c = 0.0f;
         
         // Alteração da ordem dos loops para (k, j, i)
+        #pragma omp parallel for reduction(max:max_c) private(old_x, change) // <---------------------------------------------- ADICIONADO PRAGMA
         for (int k = 1; k <= O; k++) {
             for (int j = 1; j <= N; j++) {
                 for (int i = 1 + (j + k) % 2; i <= M; i += 2) {
@@ -82,6 +90,7 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
         }
 
         // Segunda parte do Red-Black com a nova ordem de loops (k, j, i)
+        #pragma omp parallel for reduction(max:max_c) private(old_x, change) // <---------------------------------------------- ADICIONADO PRAGMA
         for (int k = 1; k <= O; k++) {
             for (int j = 1; j <= N; j++) {
                 for (int i = 1 + (j + k + 1) % 2; i <= M; i += 2) {
@@ -119,7 +128,7 @@ void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v,
   float dtY = dt * N;
   float dtZ = dt * O;
 
-
+  #pragma omp parallel for shared(d, d0, u, v, w) // <---------------------------------------------- ADICIONADO PRAGMA
   for (int k = 1; k <= O; k++) {
     for (int j = 1; j <= N; j++) {
       for (int i = 1; i <= M; i++) {

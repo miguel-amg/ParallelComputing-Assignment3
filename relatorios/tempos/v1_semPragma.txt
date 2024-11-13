@@ -1,0 +1,641 @@
+g++ -Wall -Ofast -funroll-loops -ftree-vectorize -mtune=native -march=native -fopenmp -g -fno-omit-frame-pointer main.cpp fluid_solver.cpp EventManager.cpp -o fluid_sim
+Executando com OMP_NUM_THREADS=1 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73498435280      instructions              #    1.78  insn per cycle                                            
+       41245759275      cycles                                                      
+
+      12.947289064 seconds time elapsed
+
+      12.928663000 seconds user
+       0.018002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=1
+--------------------------------------------
+Executando com OMP_NUM_THREADS=2 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73503458724      instructions              #    1.78  insn per cycle                                            
+       41280380697      cycles                                                      
+
+     103.216200709 seconds time elapsed
+
+      13.194364000 seconds user
+       0.012001000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=2
+--------------------------------------------
+Executando com OMP_NUM_THREADS=3 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73504371417      instructions              #    1.78  insn per cycle                                            
+       41264042151      cycles                                                      
+
+      13.786254731 seconds time elapsed
+
+      13.767964000 seconds user
+       0.017002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=3
+--------------------------------------------
+Executando com OMP_NUM_THREADS=4 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73503280195      instructions              #    1.78  insn per cycle                                            
+       41243585118      cycles                                                      
+
+      13.757023635 seconds time elapsed
+
+      13.738884000 seconds user
+       0.018003000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=4
+--------------------------------------------
+Executando com OMP_NUM_THREADS=5 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73491487641      instructions              #    1.79  insn per cycle                                            
+       41020255709      cycles                                                      
+
+      82.939471145 seconds time elapsed
+
+      13.762653000 seconds user
+       0.012000000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=5
+--------------------------------------------
+Executando com OMP_NUM_THREADS=6 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73494070382      instructions              #    1.83  insn per cycle                                            
+       40255524968      cycles                                                      
+
+      12.359076023 seconds time elapsed
+
+      12.338257000 seconds user
+       0.019005000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=6
+--------------------------------------------
+Executando com OMP_NUM_THREADS=7 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73495260545      instructions              #    1.78  insn per cycle                                            
+       41184950351      cycles                                                      
+
+      12.653296145 seconds time elapsed
+
+      12.637759000 seconds user
+       0.015000000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=7
+--------------------------------------------
+Executando com OMP_NUM_THREADS=8 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73494554369      instructions              #    1.78  insn per cycle                                            
+       41246271611      cycles                                                      
+
+      12.544752882 seconds time elapsed
+
+      12.528882000 seconds user
+       0.016003000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=8
+--------------------------------------------
+Executando com OMP_NUM_THREADS=9 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73484626426      instructions              #    1.83  insn per cycle                                            
+       40062371755      cycles                                                      
+
+      72.466543054 seconds time elapsed
+
+      12.432906000 seconds user
+       0.014002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=9
+--------------------------------------------
+Executando com OMP_NUM_THREADS=10 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73498929874      instructions              #    1.78  insn per cycle                                            
+       41251046935      cycles                                                      
+
+      12.759294997 seconds time elapsed
+
+      12.729664000 seconds user
+       0.028003000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=10
+--------------------------------------------
+Executando com OMP_NUM_THREADS=11 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73498773058      instructions              #    1.82  insn per cycle                                            
+       40297583073      cycles                                                      
+
+      72.568840679 seconds time elapsed
+
+      12.539259000 seconds user
+       0.024000000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=11
+--------------------------------------------
+Executando com OMP_NUM_THREADS=12 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73498685805      instructions              #    1.78  insn per cycle                                            
+       41257340377      cycles                                                      
+
+      12.671361015 seconds time elapsed
+
+      12.651257000 seconds user
+       0.019004000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=12
+--------------------------------------------
+Executando com OMP_NUM_THREADS=13 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73496297977      instructions              #    1.80  insn per cycle                                            
+       40742576461      cycles                                                      
+
+      72.730128119 seconds time elapsed
+
+      12.698337000 seconds user
+       0.020002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=13
+--------------------------------------------
+Executando com OMP_NUM_THREADS=14 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73495529569      instructions              #    1.78  insn per cycle                                            
+       41251488729      cycles                                                      
+
+      12.734066170 seconds time elapsed
+
+      12.710690000 seconds user
+       0.022002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=14
+--------------------------------------------
+Executando com OMP_NUM_THREADS=15 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73497962645      instructions              #    1.82  insn per cycle                                            
+       40285984128      cycles                                                      
+
+      12.360780480 seconds time elapsed
+
+      12.341095000 seconds user
+       0.019001000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=15
+--------------------------------------------
+Executando com OMP_NUM_THREADS=16 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73494392108      instructions              #    1.79  insn per cycle                                            
+       41159103447      cycles                                                      
+
+      72.947748556 seconds time elapsed
+
+      12.911560000 seconds user
+       0.018999000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=16
+--------------------------------------------
+Executando com OMP_NUM_THREADS=17 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73495373217      instructions              #    1.78  insn per cycle                                            
+       41277588458      cycles                                                      
+
+      12.557705142 seconds time elapsed
+
+      12.543655000 seconds user
+       0.013002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=17
+--------------------------------------------
+Executando com OMP_NUM_THREADS=18 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73496455853      instructions              #    1.79  insn per cycle                                            
+       41081228753      cycles                                                      
+
+      72.751863065 seconds time elapsed
+
+      12.646159000 seconds user
+       0.015998000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=18
+--------------------------------------------
+Executando com OMP_NUM_THREADS=19 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73498439639      instructions              #    1.78  insn per cycle                                            
+       41230288327      cycles                                                      
+
+      12.505098754 seconds time elapsed
+
+      12.489536000 seconds user
+       0.014002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=19
+--------------------------------------------
+Executando com OMP_NUM_THREADS=20 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73492715361      instructions              #    1.82  insn per cycle                                            
+       40392134871      cycles                                                      
+
+      72.631313610 seconds time elapsed
+
+      12.602223000 seconds user
+       0.018006000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=20
+--------------------------------------------
+Executando com OMP_NUM_THREADS=21 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73498141562      instructions              #    1.82  insn per cycle                                            
+       40311662070      cycles                                                      
+
+      12.251763681 seconds time elapsed
+
+      12.230107000 seconds user
+       0.020005000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=21
+--------------------------------------------
+Executando com OMP_NUM_THREADS=22 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73493737651      instructions              #    1.83  insn per cycle                                            
+       40219625685      cycles                                                      
+
+      12.260202240 seconds time elapsed
+
+      12.248123000 seconds user
+       0.010000000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=22
+--------------------------------------------
+Executando com OMP_NUM_THREADS=23 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73493907570      instructions              #    1.83  insn per cycle                                            
+       40214323252      cycles                                                      
+
+      40.750009011 seconds time elapsed
+
+      12.272493000 seconds user
+       0.017999000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=23
+--------------------------------------------
+Executando com OMP_NUM_THREADS=24 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73498853122      instructions              #    1.78  insn per cycle                                            
+       41287377169      cycles                                                      
+
+      12.678335749 seconds time elapsed
+
+      12.653080000 seconds user
+       0.024003000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=24
+--------------------------------------------
+Executando com OMP_NUM_THREADS=25 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73493808049      instructions              #    1.79  insn per cycle                                            
+       41153153761      cycles                                                      
+
+      12.624057076 seconds time elapsed
+
+      12.606284000 seconds user
+       0.017004000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=25
+--------------------------------------------
+Executando com OMP_NUM_THREADS=26 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73494768781      instructions              #    1.80  insn per cycle                                            
+       40932265442      cycles                                                      
+
+      12.407321765 seconds time elapsed
+
+      12.391609000 seconds user
+       0.015000000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=26
+--------------------------------------------
+Executando com OMP_NUM_THREADS=27 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73493561978      instructions              #    1.82  insn per cycle                                            
+       40301820425      cycles                                                      
+
+      12.215931685 seconds time elapsed
+
+      12.194126000 seconds user
+       0.021003000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=27
+--------------------------------------------
+Executando com OMP_NUM_THREADS=28 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73494103501      instructions              #    1.82  insn per cycle                                            
+       40320033439      cycles                                                      
+
+      12.221478667 seconds time elapsed
+
+      12.207831000 seconds user
+       0.013003000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=28
+--------------------------------------------
+Executando com OMP_NUM_THREADS=29 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73495491998      instructions              #    1.78  insn per cycle                                            
+       41245663702      cycles                                                      
+
+      12.764590919 seconds time elapsed
+
+      12.738136000 seconds user
+       0.025008000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=29
+--------------------------------------------
+Executando com OMP_NUM_THREADS=30 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73493628126      instructions              #    1.83  insn per cycle                                            
+       40216460470      cycles                                                      
+
+      12.344007946 seconds time elapsed
+
+      12.325571000 seconds user
+       0.018003000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=30
+--------------------------------------------
+Executando com OMP_NUM_THREADS=31 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73495160089      instructions              #    1.78  insn per cycle                                            
+       41247646502      cycles                                                      
+
+      12.664386552 seconds time elapsed
+
+      12.643191000 seconds user
+       0.021000000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=31
+--------------------------------------------
+Executando com OMP_NUM_THREADS=32 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73497885153      instructions              #    1.78  insn per cycle                                            
+       41240391142      cycles                                                      
+
+      12.504603377 seconds time elapsed
+
+      12.487110000 seconds user
+       0.017002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=32
+--------------------------------------------
+Executando com OMP_NUM_THREADS=33 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73495663168      instructions              #    1.78  insn per cycle                                            
+       41238064291      cycles                                                      
+
+      12.655043275 seconds time elapsed
+
+      12.633310000 seconds user
+       0.021002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=33
+--------------------------------------------
+Executando com OMP_NUM_THREADS=34 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73492883065      instructions              #    1.82  insn per cycle                                            
+       40292955375      cycles                                                      
+
+      12.214222258 seconds time elapsed
+
+      12.195424000 seconds user
+       0.017000000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=34
+--------------------------------------------
+Executando com OMP_NUM_THREADS=35 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73495016470      instructions              #    1.78  insn per cycle                                            
+       41212183512      cycles                                                      
+
+      12.649458606 seconds time elapsed
+
+      12.629360000 seconds user
+       0.020002000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=35
+--------------------------------------------
+Executando com OMP_NUM_THREADS=36 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73498047088      instructions              #    1.78  insn per cycle                                            
+       41249972807      cycles                                                      
+
+      12.506933787 seconds time elapsed
+
+      12.485736000 seconds user
+       0.021001000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=36
+--------------------------------------------
+Executando com OMP_NUM_THREADS=37 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73494985605      instructions              #    1.83  insn per cycle                                            
+       40248819219      cycles                                                      
+
+      12.355705394 seconds time elapsed
+
+      12.332752000 seconds user
+       0.019001000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=37
+--------------------------------------------
+Executando com OMP_NUM_THREADS=38 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73491208874      instructions              #    1.83  insn per cycle                                            
+       40221579637      cycles                                                      
+
+      12.194551493 seconds time elapsed
+
+      12.179154000 seconds user
+       0.012000000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=38
+--------------------------------------------
+Executando com OMP_NUM_THREADS=39 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73494279327      instructions              #    1.80  insn per cycle                                            
+       40806194721      cycles                                                      
+
+      12.736183673 seconds time elapsed
+
+      12.707586000 seconds user
+       0.023004000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=39
+--------------------------------------------
+Executando com OMP_NUM_THREADS=40 e cpus-per-task=40
+Total density after 100 timesteps: 140881
+
+ Performance counter stats for './fluid_sim':
+
+       73485555852      instructions              #    1.83  insn per cycle                                            
+       40114330042      cycles                                                      
+
+      12.230400500 seconds time elapsed
+
+      12.203317000 seconds user
+       0.023998000 seconds sys
+
+
+Finalizado para OMP_NUM_THREADS=40
+--------------------------------------------
