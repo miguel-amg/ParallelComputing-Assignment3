@@ -1,2 +1,0 @@
-salloc --patition METER --time
-depois dar ssh lá para dentro, usar --exlusive a mesma

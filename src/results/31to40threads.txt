@@ -1,0 +1,70 @@
+OMP_NUM_THREADS: 31
+Total density after 100 timesteps: 140878
+
+real	0m3.262s
+user	1m39.798s
+sys	0m0.268s
+
+OMP_NUM_THREADS: 32
+Total density after 100 timesteps: 140878
+
+real	0m2.977s
+user	1m34.396s
+sys	0m0.329s
+
+OMP_NUM_THREADS: 33
+Total density after 100 timesteps: 140878
+
+real	0m2.465s
+user	1m20.499s
+sys	0m0.246s
+
+OMP_NUM_THREADS: 34
+Total density after 100 timesteps: 140878
+
+real	0m2.913s
+user	1m38.215s
+sys	0m0.270s
+
+OMP_NUM_THREADS: 35
+Total density after 100 timesteps: 140878
+
+real	0m3.083s
+user	1m46.988s
+sys	0m0.307s
+
+OMP_NUM_THREADS: 36
+Total density after 100 timesteps: 140878
+
+real	0m2.411s
+user	1m25.921s
+sys	0m0.294s
+
+OMP_NUM_THREADS: 37
+Total density after 100 timesteps: 140878
+
+real	0m2.607s
+user	1m35.491s
+sys	0m0.327s
+
+OMP_NUM_THREADS: 38
+Total density after 100 timesteps: 140878
+
+real	0m3.050s
+user	1m54.924s
+sys	0m0.357s
+
+OMP_NUM_THREADS: 39
+Total density after 100 timesteps: 140878
+
+real	0m2.835s
+user	1m49.569s
+sys	0m0.330s
+
+OMP_NUM_THREADS: 40
+Total density after 100 timesteps: 140878
+
+real	0m2.729s
+user	1m48.196s
+sys	0m0.285s
+
