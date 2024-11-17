@@ -1,0 +1,986 @@
+2 THREADS:
+
+# started on Sun Nov 17 17:24:05 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   254,208,946,921      instructions              #    2.73  insn per cycle                                              (37.49%)
+    93,244,620,350      cycles                                                        (50.00%)
+    48,969,327,064      L1-dcache-loads                                               (50.00%)
+     1,973,547,257      L1-dcache-load-misses     #    4.03% of all L1-dcache hits    (25.00%)
+         5,306,616      LLC-load-misses           #    3.99% of all LL-cache hits     (25.00%)
+       133,041,353      LLC-loads                                                     (37.50%)
+         6,124,903      LLC-store-misses                                              (25.00%)
+        14,543,002      LLC-stores                                                    (25.00%)
+
+      14.832455415 seconds time elapsed
+
+      29.543796000 seconds user
+       0.086002000 seconds sys
+
+3 THREADS:
+
+# started on Sun Nov 17 17:24:20 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   254,450,395,758      instructions              #    2.70  insn per cycle                                              (37.50%)
+    94,302,568,113      cycles                                                        (49.99%)
+    49,060,588,431      L1-dcache-loads                                               (49.99%)
+     1,967,502,772      L1-dcache-load-misses     #    4.01% of all L1-dcache hits    (25.00%)
+         4,867,069      LLC-load-misses           #    3.62% of all LL-cache hits     (25.00%)
+       134,399,801      LLC-loads                                                     (37.50%)
+         5,399,724      LLC-store-misses                                              (25.00%)
+        16,042,289      LLC-stores                                                    (25.00%)
+
+      10.252416221 seconds time elapsed
+
+      30.603078000 seconds user
+       0.096009000 seconds sys
+
+4 THREADS: 
+
+# started on Sun Nov 17 17:24:30 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   254,910,897,984      instructions              #    2.66  insn per cycle                                              (37.50%)
+    95,808,982,753      cycles                                                        (50.00%)
+    49,044,102,065      L1-dcache-loads                                               (49.99%)
+     1,977,517,432      L1-dcache-load-misses     #    4.03% of all L1-dcache hits    (24.99%)
+         7,093,119      LLC-load-misses           #    5.42% of all LL-cache hits     (25.00%)
+       130,953,484      LLC-loads                                                     (37.50%)
+         8,663,618      LLC-store-misses                                              (25.00%)
+        18,411,418      LLC-stores                                                    (24.99%)
+
+       7.857643772 seconds time elapsed
+
+      31.267362000 seconds user
+       0.110004000 seconds sys
+
+5 THREADS: 
+
+# started on Sun Nov 17 17:24:38 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   256,069,629,278      instructions              #    2.64  insn per cycle                                              (37.50%)
+    97,056,573,137      cycles                                                        (50.00%)
+    49,217,041,998      L1-dcache-loads                                               (49.99%)
+     1,990,770,536      L1-dcache-load-misses     #    4.04% of all L1-dcache hits    (25.00%)
+         7,220,978      LLC-load-misses           #    5.32% of all LL-cache hits     (25.00%)
+       135,605,324      LLC-loads                                                     (37.50%)
+         7,982,713      LLC-store-misses                                              (25.00%)
+        20,826,040      LLC-stores                                                    (25.00%)
+
+       6.537673918 seconds time elapsed
+
+      32.534426000 seconds user
+       0.081003000 seconds sys
+
+6 THREADS:
+
+# started on Sun Nov 17 17:24:45 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   255,981,289,930      instructions              #    2.61  insn per cycle                                              (37.51%)
+    98,195,533,903      cycles                                                        (50.02%)
+    49,051,551,324      L1-dcache-loads                                               (50.00%)
+     1,983,698,907      L1-dcache-load-misses     #    4.04% of all L1-dcache hits    (25.00%)
+         8,992,930      LLC-load-misses           #    6.89% of all LL-cache hits     (24.99%)
+       130,556,463      LLC-loads                                                     (37.48%)
+        10,850,266      LLC-store-misses                                              (25.00%)
+        22,111,556      LLC-stores                                                    (25.00%)
+
+       5.574043249 seconds time elapsed
+
+      33.286358000 seconds user
+       0.075005000 seconds sys
+
+7 THREADS:
+
+# started on Sun Nov 17 17:24:51 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   255,164,427,554      instructions              #    2.53  insn per cycle                                              (37.51%)
+   100,932,606,244      cycles                                                        (50.01%)
+    49,179,230,980      L1-dcache-loads                                               (50.00%)
+     2,001,133,079      L1-dcache-load-misses     #    4.07% of all L1-dcache hits    (25.00%)
+        10,818,672      LLC-load-misses           #    8.30% of all LL-cache hits     (25.00%)
+       130,269,825      LLC-loads                                                     (37.49%)
+        12,771,200      LLC-store-misses                                              (24.99%)
+        25,253,627      LLC-stores                                                    (25.01%)
+
+       4.988390179 seconds time elapsed
+
+      34.708082000 seconds user
+       0.091013000 seconds sys
+
+8 THREADS:
+
+# started on Sun Nov 17 17:24:56 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   257,051,086,784      instructions              #    2.48  insn per cycle                                              (37.49%)
+   103,690,708,077      cycles                                                        (49.99%)
+    49,415,323,722      L1-dcache-loads                                               (47.47%)
+     1,987,875,245      L1-dcache-load-misses     #    4.02% of all L1-dcache hits    (30.50%)
+        14,132,057      LLC-load-misses           #   10.63% of all LL-cache hits     (25.37%)
+       132,950,846      LLC-loads                                                     (37.64%)
+        14,744,792      LLC-store-misses                                              (25.02%)
+        29,635,732      LLC-stores                                                    (25.00%)
+
+       4.530986530 seconds time elapsed
+
+      36.035741000 seconds user
+       0.105996000 seconds sys
+
+9 THREADS:
+
+# started on Sun Nov 17 17:25:00 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   257,059,025,760      instructions              #    2.47  insn per cycle                                              (37.50%)
+   103,992,895,131      cycles                                                        (49.99%)
+    49,176,293,544      L1-dcache-loads                                               (49.96%)
+     1,987,586,564      L1-dcache-load-misses     #    4.04% of all L1-dcache hits    (24.99%)
+        15,573,502      LLC-load-misses           #   12.41% of all LL-cache hits     (25.00%)
+       125,454,567      LLC-loads                                                     (37.51%)
+        17,011,479      LLC-store-misses                                              (25.03%)
+        32,717,927      LLC-stores                                                    (25.01%)
+
+       4.153638354 seconds time elapsed
+
+      37.162941000 seconds user
+       0.093997000 seconds sys
+
+10 THREADS:
+
+# started on Sun Nov 17 17:25:05 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   256,374,207,249      instructions              #    2.40  insn per cycle                                              (37.49%)
+   106,953,258,357      cycles                                                        (49.99%)
+    49,351,705,132      L1-dcache-loads                                               (49.99%)
+     2,013,982,050      L1-dcache-load-misses     #    4.08% of all L1-dcache hits    (25.01%)
+        20,991,504      LLC-load-misses           #   16.04% of all LL-cache hits     (25.00%)
+       130,909,101      LLC-loads                                                     (37.50%)
+        19,427,708      LLC-store-misses                                              (24.99%)
+        35,127,716      LLC-stores                                                    (24.99%)
+
+       3.864721658 seconds time elapsed
+
+      38.407451000 seconds user
+       0.080005000 seconds sys
+
+11 THREADS:
+
+# started on Sun Nov 17 17:27:55 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   258,339,523,957      instructions              #    2.34  insn per cycle                                              (37.49%)
+   110,389,826,237      cycles                                                        (50.01%)
+    49,437,403,139      L1-dcache-loads                                               (49.80%)
+     2,025,077,581      L1-dcache-load-misses     #    4.10% of all L1-dcache hits    (28.23%)
+        20,165,670      LLC-load-misses           #   15.13% of all LL-cache hits     (26.69%)
+       133,284,335      LLC-loads                                                     (38.06%)
+        21,832,640      LLC-store-misses                                              (24.99%)
+        37,855,514      LLC-stores                                                    (24.99%)
+
+       3.671591548 seconds time elapsed
+
+      40.019183000 seconds user
+       0.144007000 seconds sys
+
+12 THREADS:
+
+# started on Sun Nov 17 17:27:59 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   257,720,791,629      instructions              #    2.37  insn per cycle                                              (37.53%)
+   108,832,554,572      cycles                                                        (50.05%)
+    49,574,675,180      L1-dcache-loads                                               (50.00%)
+     2,007,612,007      L1-dcache-load-misses     #    4.05% of all L1-dcache hits    (24.97%)
+        14,322,775      LLC-load-misses           #   11.34% of all LL-cache hits     (24.97%)
+       126,345,889      LLC-loads                                                     (37.47%)
+        16,975,018      LLC-store-misses                                              (25.01%)
+        38,056,718      LLC-stores                                                    (25.02%)
+
+       3.299884792 seconds time elapsed
+
+      39.348264000 seconds user
+       0.085998000 seconds sys
+
+13 THREADS:
+
+# started on Sun Nov 17 17:28:02 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   257,643,865,828      instructions              #    2.39  insn per cycle                                              (37.48%)
+   107,940,797,725      cycles                                                        (49.97%)
+    49,498,082,900      L1-dcache-loads                                               (49.93%)
+     2,015,821,100      L1-dcache-load-misses     #    4.07% of all L1-dcache hits    (24.99%)
+        16,289,674      LLC-load-misses           #   12.69% of all LL-cache hits     (25.02%)
+       128,397,022      LLC-loads                                                     (37.54%)
+        14,670,520      LLC-store-misses                                              (25.02%)
+        45,359,979      LLC-stores                                                    (24.99%)
+
+       3.003398635 seconds time elapsed
+
+      38.736920000 seconds user
+       0.108013000 seconds sys
+
+14 THREADS:
+
+# started on Sun Nov 17 17:28:05 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   257,316,556,982      instructions              #    2.37  insn per cycle                                              (37.51%)
+   108,557,706,512      cycles                                                        (50.01%)
+    49,780,585,737      L1-dcache-loads                                               (49.97%)
+     2,051,816,082      L1-dcache-load-misses     #    4.12% of all L1-dcache hits    (28.52%)
+         7,157,949      LLC-load-misses           #    5.93% of all LL-cache hits     (27.08%)
+       120,690,190      LLC-loads                                                     (38.18%)
+         7,271,559      LLC-store-misses                                              (25.00%)
+        40,864,225      LLC-stores                                                    (25.00%)
+
+       2.831225053 seconds time elapsed
+
+      39.079802000 seconds user
+       0.142995000 seconds sys
+
+15 THREADS:
+
+# started on Sun Nov 17 17:28:08 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   258,913,090,497      instructions              #    2.19  insn per cycle                                              (37.49%)
+   118,318,767,715      cycles                                                        (49.99%)
+    49,682,868,447      L1-dcache-loads                                               (49.96%)
+     2,031,699,492      L1-dcache-load-misses     #    4.09% of all L1-dcache hits    (25.00%)
+        34,861,539      LLC-load-misses           #   25.24% of all LL-cache hits     (25.00%)
+       138,133,248      LLC-loads                                                     (37.51%)
+        31,405,136      LLC-store-misses                                              (25.01%)
+        52,135,695      LLC-stores                                                    (24.99%)
+
+       2.882070468 seconds time elapsed
+
+      42.632097000 seconds user
+       0.133028000 seconds sys
+
+16 THREADS:
+
+# started on Sun Nov 17 17:55:15 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   260,382,338,762      instructions              #    2.08  insn per cycle                                              (37.50%)
+   125,365,581,643      cycles                                                        (50.00%)
+    49,908,244,049      L1-dcache-loads                                               (49.98%)
+     2,041,131,345      L1-dcache-load-misses     #    4.09% of all L1-dcache hits    (25.00%)
+        38,068,540      LLC-load-misses           #   28.55% of all LL-cache hits     (25.00%)
+       133,317,005      LLC-loads                                                     (37.50%)
+        32,822,725      LLC-store-misses                                              (25.00%)
+        55,725,857      LLC-stores                                                    (25.00%)
+
+       2.867180521 seconds time elapsed
+
+      45.314756000 seconds user
+       0.146944000 seconds sys
+
+17 THREADS:
+
+# started on Sun Nov 17 17:55:18 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   262,880,539,302      instructions              #    2.12  insn per cycle                                              (37.53%)
+   124,129,777,040      cycles                                                        (50.02%)
+    50,215,780,780      L1-dcache-loads                                               (48.10%)
+     2,059,106,612      L1-dcache-load-misses     #    4.10% of all L1-dcache hits    (32.01%)
+        14,094,536      LLC-load-misses           #   11.84% of all LL-cache hits     (27.03%)
+       118,993,899      LLC-loads                                                     (38.16%)
+        14,981,511      LLC-store-misses                                              (25.01%)
+        51,378,899      LLC-stores                                                    (25.03%)
+
+       2.642279994 seconds time elapsed
+
+      44.506744000 seconds user
+       0.134002000 seconds sys
+
+18 THREADS:
+
+# started on Sun Nov 17 17:55:21 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   260,651,039,380      instructions              #    1.96  insn per cycle                                              (37.50%)
+   132,738,854,540      cycles                                                        (50.00%)
+    49,962,061,568      L1-dcache-loads                                               (49.98%)
+     2,081,883,577      L1-dcache-load-misses     #    4.17% of all L1-dcache hits    (27.53%)
+        41,702,247      LLC-load-misses           #   30.87% of all LL-cache hits     (26.51%)
+       135,091,105      LLC-loads                                                     (38.00%)
+        38,577,992      LLC-store-misses                                              (25.00%)
+        62,974,239      LLC-stores                                                    (25.00%)
+
+       2.683714950 seconds time elapsed
+
+      47.697725000 seconds user
+       0.135013000 seconds sys
+
+19 THREADS:
+
+# started on Sun Nov 17 17:55:24 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   262,532,105,452      instructions              #    2.03  insn per cycle                                              (37.49%)
+   129,017,640,790      cycles                                                        (49.99%)
+    50,181,010,742      L1-dcache-loads                                               (49.97%)
+     2,038,866,325      L1-dcache-load-misses     #    4.06% of all L1-dcache hits    (25.02%)
+        36,128,176      LLC-load-misses           #   25.02% of all LL-cache hits     (25.01%)
+       144,382,408      LLC-loads                                                     (37.51%)
+        27,911,701      LLC-store-misses                                              (24.99%)
+        74,967,492      LLC-stores                                                    (24.99%)
+
+       2.462424487 seconds time elapsed
+
+      46.261346000 seconds user
+       0.130012000 seconds sys
+
+20 THREADS:
+
+# started on Sun Nov 17 17:55:26 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   261,784,528,430      instructions              #    1.89  insn per cycle                                              (37.50%)
+   138,486,899,716      cycles                                                        (50.00%)
+    50,159,950,797      L1-dcache-loads                                               (49.94%)
+     2,054,516,629      L1-dcache-load-misses     #    4.10% of all L1-dcache hits    (24.99%)
+        58,098,494      LLC-load-misses           #   38.94% of all LL-cache hits     (24.99%)
+       149,215,268      LLC-loads                                                     (37.51%)
+        43,742,579      LLC-store-misses                                              (25.03%)
+        70,005,813      LLC-stores                                                    (25.01%)
+
+       2.504467043 seconds time elapsed
+
+      49.664094000 seconds user
+       0.132000000 seconds sys
+
+21 THREADS:
+
+# started on Sun Nov 17 17:28:25 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   271,342,260,874      instructions              #    1.77  insn per cycle                                              (37.56%)
+   153,396,878,169      cycles                                                        (50.05%)
+    51,623,933,383      L1-dcache-loads                                               (47.25%)
+     2,026,243,253      L1-dcache-load-misses     #    3.93% of all L1-dcache hits    (28.18%)
+        20,225,055      LLC-load-misses           #   17.24% of all LL-cache hits     (24.99%)
+       117,305,283      LLC-loads                                                     (37.47%)
+        24,181,053      LLC-store-misses                                              (25.02%)
+        59,529,895      LLC-stores                                                    (25.04%)
+
+       2.645250285 seconds time elapsed
+
+      54.993980000 seconds user
+       0.205988000 seconds sys
+
+22 THREADS:
+
+# started on Sun Nov 17 17:28:27 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   263,517,788,761      instructions              #    1.83  insn per cycle                                              (37.56%)
+   144,047,486,809      cycles                                                        (50.05%)
+    50,381,241,407      L1-dcache-loads                                               (49.99%)
+     2,052,563,443      L1-dcache-load-misses     #    4.07% of all L1-dcache hits    (24.98%)
+        49,776,291      LLC-load-misses           #   34.70% of all LL-cache hits     (24.97%)
+       143,444,868      LLC-loads                                                     (37.46%)
+        44,563,820      LLC-store-misses                                              (25.00%)
+        69,798,947      LLC-stores                                                    (25.04%)
+
+       2.371519201 seconds time elapsed
+
+      51.631584000 seconds user
+       0.190061000 seconds sys
+
+23 THREADS:
+
+# started on Sun Nov 17 17:28:30 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   272,458,300,092      instructions              #    1.69  insn per cycle                                              (37.50%)
+   161,606,315,252      cycles                                                        (50.00%)
+    51,599,726,552      L1-dcache-loads                                               (46.29%)
+     2,122,813,753      L1-dcache-load-misses     #    4.11% of all L1-dcache hits    (33.95%)
+        42,992,962      LLC-load-misses           #   27.77% of all LL-cache hits     (26.08%)
+       154,842,304      LLC-loads                                                     (37.85%)
+        32,392,500      LLC-store-misses                                              (24.99%)
+        89,298,896      LLC-stores                                                    (25.00%)
+
+       2.544299948 seconds time elapsed
+
+      58.011251000 seconds user
+       0.144983000 seconds sys
+
+24 THREADS:
+
+# started on Sun Nov 17 17:28:33 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   271,181,432,310      instructions              #    1.65  insn per cycle                                              (37.51%)
+   164,848,866,643      cycles                                                        (50.00%)
+    51,520,648,638      L1-dcache-loads                                               (48.55%)
+     2,100,319,838      L1-dcache-load-misses     #    4.08% of all L1-dcache hits    (28.14%)
+        69,576,911      LLC-load-misses           #   39.75% of all LL-cache hits     (25.33%)
+       175,052,064      LLC-loads                                                     (37.58%)
+        46,284,020      LLC-store-misses                                              (25.02%)
+        93,409,696      LLC-stores                                                    (25.01%)
+
+       2.491300345 seconds time elapsed
+
+      59.154112000 seconds user
+       0.215040000 seconds sys
+
+25 THREADS:
+
+# started on Sun Nov 17 17:28:35 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   288,128,990,300      instructions              #    1.43  insn per cycle                                              (37.53%)
+   201,873,265,280      cycles                                                        (49.95%)
+    53,932,693,926      L1-dcache-loads                                               (43.90%)
+     2,113,416,010      L1-dcache-load-misses     #    3.92% of all L1-dcache hits    (37.66%)
+        39,715,327      LLC-load-misses           #   22.80% of all LL-cache hits     (26.73%)
+       174,195,041      LLC-loads                                                     (37.91%)
+        26,672,459      LLC-store-misses                                              (25.00%)
+       101,718,128      LLC-stores                                                    (25.02%)
+
+       2.924180722 seconds time elapsed
+
+      72.457215000 seconds user
+       0.232958000 seconds sys
+
+26 THREADS:
+
+# started on Sun Nov 17 17:30:02 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   289,469,693,212      instructions              #    1.25  insn per cycle                                              (36.99%)
+   231,709,880,395      cycles                                                        (49.29%)
+    54,154,140,903      L1-dcache-loads                                               (46.50%)
+     2,114,646,366      L1-dcache-load-misses     #    3.90% of all L1-dcache hits    (34.33%)
+        75,281,188      LLC-load-misses           #   39.27% of all LL-cache hits     (28.32%)
+       191,686,368      LLC-loads                                                     (38.13%)
+        51,135,481      LLC-store-misses                                              (24.65%)
+       100,742,570      LLC-stores                                                    (24.64%)
+
+       3.258996466 seconds time elapsed
+
+      83.739144000 seconds user
+       0.260950000 seconds sys
+
+27 THREADS:
+
+# started on Sun Nov 17 17:30:06 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   286,697,968,064      instructions              #    1.23  insn per cycle                                              (37.48%)
+   233,202,227,105      cycles                                                        (49.86%)
+    53,703,865,091      L1-dcache-loads                                               (45.45%)
+     2,104,283,977      L1-dcache-load-misses     #    3.92% of all L1-dcache hits    (36.26%)
+        70,323,034      LLC-load-misses           #   37.41% of all LL-cache hits     (28.23%)
+       187,982,977      LLC-loads                                                     (38.36%)
+        49,293,451      LLC-store-misses                                              (25.00%)
+        92,837,263      LLC-stores                                                    (25.00%)
+
+       3.130802659 seconds time elapsed
+
+      83.709415000 seconds user
+       0.271848000 seconds sys
+
+28 THREADS:
+
+# started on Sun Nov 17 17:30:09 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   285,691,834,969      instructions              #    1.32  insn per cycle                                              (37.44%)
+   217,029,810,878      cycles                                                        (49.39%)
+    53,522,691,474      L1-dcache-loads                                               (45.35%)
+     2,085,145,224      L1-dcache-load-misses     #    3.90% of all L1-dcache hits    (35.32%)
+        24,479,040      LLC-load-misses           #   17.62% of all LL-cache hits     (28.91%)
+       138,944,958      LLC-loads                                                     (38.01%)
+        27,298,812      LLC-store-misses                                              (24.95%)
+        79,016,161      LLC-stores                                                    (24.96%)
+
+       2.808382675 seconds time elapsed
+
+      77.919989000 seconds user
+       0.232973000 seconds sys
+
+29 THREADS:
+
+# started on Sun Nov 17 17:30:12 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   285,377,577,894      instructions              #    1.18  insn per cycle                                              (37.49%)
+   241,444,506,596      cycles                                                        (49.74%)
+    53,877,494,843      L1-dcache-loads                                               (44.87%)
+     2,106,506,431      L1-dcache-load-misses     #    3.91% of all L1-dcache hits    (37.97%)
+        53,178,127      LLC-load-misses           #   29.74% of all LL-cache hits     (28.52%)
+       178,782,876      LLC-loads                                                     (38.78%)
+        54,801,430      LLC-store-misses                                              (24.99%)
+        95,884,656      LLC-stores                                                    (24.99%)
+
+       3.023812067 seconds time elapsed
+
+      86.744550000 seconds user
+       0.246958000 seconds sys
+
+30 THREADS:
+
+# started on Sun Nov 17 17:30:15 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   282,981,827,697      instructions              #    1.09  insn per cycle                                              (37.51%)
+   260,234,125,211      cycles                                                        (49.94%)
+    53,258,508,371      L1-dcache-loads                                               (44.48%)
+     2,132,043,538      L1-dcache-load-misses     #    4.00% of all L1-dcache hits    (34.52%)
+        89,603,609      LLC-load-misses           #   39.07% of all LL-cache hits     (27.69%)
+       229,366,835      LLC-loads                                                     (37.75%)
+        67,576,205      LLC-store-misses                                              (25.02%)
+       111,656,455      LLC-stores                                                    (25.01%)
+
+       3.147317334 seconds time elapsed
+
+      93.470618000 seconds user
+       0.292945000 seconds sys
+
+31 THREADS:
+
+# started on Sun Nov 17 17:30:18 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   283,010,006,544      instructions              #    1.04  insn per cycle                                              (37.42%)
+   272,354,018,100      cycles                                                        (49.51%)
+    53,388,314,922      L1-dcache-loads                                               (45.87%)
+     2,137,279,998      L1-dcache-load-misses     #    4.00% of all L1-dcache hits    (35.83%)
+       100,551,076      LLC-load-misses           #   39.31% of all LL-cache hits     (30.38%)
+       255,816,216      LLC-loads                                                     (38.93%)
+        75,725,424      LLC-store-misses                                              (24.95%)
+       125,917,014      LLC-stores                                                    (24.95%)
+
+       3.190349711 seconds time elapsed
+
+      97.922293000 seconds user
+       0.248949000 seconds sys
+
+32 THREADS:
+
+# started on Sun Nov 17 17:30:21 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   284,523,554,411      instructions              #    1.03  insn per cycle                                              (36.89%)
+   275,742,470,072      cycles                                                        (48.63%)
+    53,433,142,968      L1-dcache-loads                                               (45.60%)
+     2,145,667,790      L1-dcache-load-misses     #    4.02% of all L1-dcache hits    (37.05%)
+        85,979,600      LLC-load-misses           #   34.12% of all LL-cache hits     (31.23%)
+       251,997,432      LLC-loads                                                     (38.16%)
+        67,152,826      LLC-store-misses                                              (24.60%)
+       137,103,991      LLC-stores                                                    (24.60%)
+
+       3.126315719 seconds time elapsed
+
+      99.134118000 seconds user
+       0.266924000 seconds sys
+
+33 THREADS:
+
+# started on Sun Nov 17 17:30:25 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   284,601,696,106      instructions              #    1.08  insn per cycle                                              (37.41%)
+   263,261,223,063      cycles                                                        (49.42%)
+    53,342,300,704      L1-dcache-loads                                               (45.92%)
+     2,142,933,230      L1-dcache-load-misses     #    4.02% of all L1-dcache hits    (36.17%)
+        76,883,677      LLC-load-misses           #   33.47% of all LL-cache hits     (30.39%)
+       229,719,952      LLC-loads                                                     (38.36%)
+        49,426,063      LLC-store-misses                                              (24.90%)
+       126,152,756      LLC-stores                                                    (24.92%)
+
+       2.895604839 seconds time elapsed
+
+      94.574768000 seconds user
+       0.342839000 seconds sys
+
+34 THREADS:
+
+# started on Sun Nov 17 17:30:28 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   283,483,941,862      instructions              #    0.93  insn per cycle                                              (36.66%)
+   306,453,743,954      cycles                                                        (47.71%)
+    53,541,787,808      L1-dcache-loads                                               (44.74%)
+     2,146,069,005      L1-dcache-load-misses     #    4.01% of all L1-dcache hits    (36.41%)
+       115,124,939      LLC-load-misses           #   37.31% of all LL-cache hits     (31.94%)
+       308,578,630      LLC-loads                                                     (38.38%)
+        78,551,332      LLC-store-misses                                              (24.44%)
+       153,034,082      LLC-stores                                                    (24.44%)
+
+       3.271949298 seconds time elapsed
+
+     110.206901000 seconds user
+       0.294975000 seconds sys
+
+35 THREADS:
+
+# started on Sun Nov 17 17:30:31 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   282,741,681,733      instructions              #    0.90  insn per cycle                                              (36.85%)
+   313,941,753,017      cycles                                                        (48.20%)
+    53,484,715,713      L1-dcache-loads                                               (44.84%)
+     2,155,641,535      L1-dcache-load-misses     #    4.03% of all L1-dcache hits    (36.56%)
+       119,136,785      LLC-load-misses           #   37.45% of all LL-cache hits     (31.59%)
+       318,146,436      LLC-loads                                                     (38.09%)
+        83,284,377      LLC-store-misses                                              (24.59%)
+       161,128,805      LLC-stores                                                    (24.57%)
+
+       3.256365065 seconds time elapsed
+
+     112.883522000 seconds user
+       0.339911000 seconds sys
+
+36 THREADS:
+
+# started on Sun Nov 17 17:30:34 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   285,069,043,835      instructions              #    0.89  insn per cycle                                              (37.12%)
+   321,761,854,658      cycles                                                        (48.99%)
+    53,471,912,871      L1-dcache-loads                                               (43.85%)
+     2,149,873,802      L1-dcache-load-misses     #    4.02% of all L1-dcache hits    (35.36%)
+       124,124,009      LLC-load-misses           #   38.95% of all LL-cache hits     (29.03%)
+       318,688,316      LLC-loads                                                     (37.70%)
+        82,395,166      LLC-store-misses                                              (24.75%)
+       160,144,668      LLC-stores                                                    (24.75%)
+
+       3.246135980 seconds time elapsed
+
+     115.657676000 seconds user
+       0.379903000 seconds sys
+
+37 THREADS:
+
+# started on Sun Nov 17 17:30:38 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   284,625,167,679      instructions              #    0.88  insn per cycle                                              (37.01%)
+   322,709,565,814      cycles                                                        (48.66%)
+    53,307,934,497      L1-dcache-loads                                               (44.73%)
+     2,175,779,725      L1-dcache-load-misses     #    4.08% of all L1-dcache hits    (35.47%)
+       122,485,286      LLC-load-misses           #   37.83% of all LL-cache hits     (30.61%)
+       323,789,483      LLC-loads                                                     (37.95%)
+        83,844,530      LLC-store-misses                                              (24.68%)
+       169,545,137      LLC-stores                                                    (24.68%)
+
+       3.168648555 seconds time elapsed
+
+     116.095188000 seconds user
+       0.311895000 seconds sys
+
+38 THREADS:
+
+# started on Sun Nov 17 17:30:41 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   283,748,210,553      instructions              #    0.81  insn per cycle                                              (36.78%)
+   349,628,447,358      cycles                                                        (48.53%)
+    53,285,273,145      L1-dcache-loads                                               (44.48%)
+     2,175,743,145      L1-dcache-load-misses     #    4.08% of all L1-dcache hits    (34.98%)
+       145,254,159      LLC-load-misses           #   38.54% of all LL-cache hits     (30.27%)
+       376,901,017      LLC-loads                                                     (37.70%)
+        94,335,463      LLC-store-misses                                              (24.52%)
+       180,521,457      LLC-stores                                                    (24.52%)
+
+       3.340974311 seconds time elapsed
+
+     125.833831000 seconds user
+       0.305999000 seconds sys
+
+39 THREADS:
+
+# started on Sun Nov 17 17:30:45 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   284,756,471,604      instructions              #    0.85  insn per cycle                                              (36.79%)
+   336,182,606,292      cycles                                                        (48.24%)
+    53,562,768,507      L1-dcache-loads                                               (43.43%)
+     2,186,619,958      L1-dcache-load-misses     #    4.08% of all L1-dcache hits    (37.27%)
+       121,903,927      LLC-load-misses           #   35.52% of all LL-cache hits     (30.20%)
+       343,179,891      LLC-loads                                                     (36.98%)
+        86,992,714      LLC-store-misses                                              (24.54%)
+       180,068,115      LLC-stores                                                    (24.53%)
+
+       3.132378147 seconds time elapsed
+
+     120.874890000 seconds user
+       0.404982000 seconds sys
+
+40 THREADS:
+
+# started on Sun Nov 17 17:30:48 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   284,500,964,924      instructions              #    0.79  insn per cycle                                              (36.81%)
+   361,644,399,198      cycles                                                        (48.47%)
+    53,523,789,829      L1-dcache-loads                                               (43.95%)
+     2,175,605,603      L1-dcache-load-misses     #    4.06% of all L1-dcache hits    (35.87%)
+       147,869,631      LLC-load-misses           #   38.70% of all LL-cache hits     (29.99%)
+       382,107,095      LLC-loads                                                     (37.89%)
+        96,464,638      LLC-store-misses                                              (24.54%)
+       183,852,036      LLC-stores                                                    (24.54%)
+
+       3.284783716 seconds time elapsed
+
+     130.080938000 seconds user
+       0.423862000 seconds sys
+
+41 THREADS:
+
+# started on Sun Nov 17 17:32:54 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   285,458,982,912      instructions              #    0.77  insn per cycle                                              (36.96%)
+   369,110,115,910      cycles                                                        (48.74%)
+    53,707,785,925      L1-dcache-loads                                               (44.05%)
+     2,188,411,302      L1-dcache-load-misses     #    4.07% of all L1-dcache hits    (36.24%)
+       160,604,332      LLC-load-misses           #   40.11% of all LL-cache hits     (30.26%)
+       400,420,303      LLC-loads                                                     (37.86%)
+       100,614,030      LLC-store-misses                                              (24.61%)
+       174,361,039      LLC-stores                                                    (24.63%)
+
+       3.268801040 seconds time elapsed
+
+     132.797110000 seconds user
+       0.484923000 seconds sys
+
+42 THREADS:
+
+# started on Sun Nov 17 17:32:57 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   287,818,635,489      instructions              #    0.73  insn per cycle                                              (35.76%)
+   393,394,919,160      cycles                                                        (46.64%)
+    53,830,115,298      L1-dcache-loads                                               (42.83%)
+     2,174,141,554      L1-dcache-load-misses     #    4.04% of all L1-dcache hits    (36.62%)
+       153,172,555      LLC-load-misses           #   37.76% of all LL-cache hits     (30.90%)
+       405,684,520      LLC-loads                                                     (36.02%)
+       110,125,587      LLC-store-misses                                              (23.85%)
+       177,358,969      LLC-stores                                                    (23.85%)
+
+       3.399880038 seconds time elapsed
+
+     141.659319000 seconds user
+       0.361054000 seconds sys
+
+43 THREADS:
+
+# started on Sun Nov 17 17:33:01 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   288,984,317,870      instructions              #    0.77  insn per cycle                                              (36.65%)
+   373,562,441,261      cycles                                                        (48.36%)
+    53,789,093,468      L1-dcache-loads                                               (43.48%)
+     2,192,540,824      L1-dcache-load-misses     #    4.08% of all L1-dcache hits    (32.04%)
+       133,724,019      LLC-load-misses           #   37.10% of all LL-cache hits     (29.14%)
+       360,428,808      LLC-loads                                                     (37.15%)
+       104,400,655      LLC-store-misses                                              (24.43%)
+       172,410,997      LLC-stores                                                    (24.43%)
+
+       3.154990304 seconds time elapsed
+
+     134.265991000 seconds user
+       0.614894000 seconds sys
+
+44 THREADS:
+
+# started on Sun Nov 17 17:33:04 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   287,445,678,356      instructions              #    0.72  insn per cycle                                              (35.69%)
+   400,313,500,774      cycles                                                        (46.71%)
+    53,709,347,566      L1-dcache-loads                                               (43.26%)
+     2,174,810,980      L1-dcache-load-misses     #    4.05% of all L1-dcache hits    (36.93%)
+       159,034,348      LLC-load-misses           #   38.52% of all LL-cache hits     (30.62%)
+       412,834,339      LLC-loads                                                     (36.40%)
+       117,255,139      LLC-store-misses                                              (23.78%)
+       190,804,100      LLC-stores                                                    (23.79%)
+
+       3.303736966 seconds time elapsed
+
+     144.105842000 seconds user
+       0.464063000 seconds sys
+
+45 THREADS:
+
+# started on Sun Nov 17 17:33:07 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   285,551,041,290      instructions              #    0.69  insn per cycle                                              (36.13%)
+   412,291,927,276      cycles                                                        (47.57%)
+    53,674,203,945      L1-dcache-loads                                               (43.55%)
+     2,202,887,902      L1-dcache-load-misses     #    4.10% of all L1-dcache hits    (37.32%)
+       167,747,085      LLC-load-misses           #   38.88% of all LL-cache hits     (29.84%)
+       431,417,234      LLC-loads                                                     (37.34%)
+       118,119,012      LLC-store-misses                                              (24.06%)
+       204,807,866      LLC-stores                                                    (24.08%)
+
+       3.328297329 seconds time elapsed
+
+     148.423461000 seconds user
+       0.505056000 seconds sys
+
+46 THREADS:
+
+# started on Sun Nov 17 17:33:11 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   287,772,242,680      instructions              #    0.78  insn per cycle                                              (36.91%)
+   367,132,825,903      cycles                                                        (48.51%)
+    53,888,738,823      L1-dcache-loads                                               (44.36%)
+     2,172,388,649      L1-dcache-load-misses     #    4.03% of all L1-dcache hits    (37.91%)
+       105,136,971      LLC-load-misses           #   32.92% of all LL-cache hits     (29.93%)
+       319,410,835      LLC-loads                                                     (37.67%)
+        91,837,739      LLC-store-misses                                              (24.57%)
+       185,956,491      LLC-stores                                                    (24.60%)
+
+       2.901024387 seconds time elapsed
+
+     132.132226000 seconds user
+       0.514965000 seconds sys
+
+47 THREADS:
+
+# started on Sun Nov 17 17:33:14 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   284,428,547,908      instructions              #    0.87  insn per cycle                                              (36.62%)
+   328,530,653,583      cycles                                                        (48.48%)
+    53,441,036,713      L1-dcache-loads                                               (42.27%)
+     2,188,546,015      L1-dcache-load-misses     #    4.10% of all L1-dcache hits    (35.39%)
+        67,400,297      LLC-load-misses           #   26.76% of all LL-cache hits     (27.59%)
+       251,845,147      LLC-loads                                                     (36.49%)
+        61,477,951      LLC-store-misses                                              (24.38%)
+       169,870,623      LLC-stores                                                    (24.41%)
+
+       2.542228226 seconds time elapsed
+
+     118.102713000 seconds user
+       0.560922000 seconds sys
+
+48 THREADS:
+
+# started on Sun Nov 17 17:33:16 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   290,308,520,410      instructions              #    0.67  insn per cycle                                              (36.25%)
+   430,429,360,271      cycles                                                        (47.43%)
+    54,124,168,934      L1-dcache-loads                                               (43.42%)
+     2,171,586,881      L1-dcache-load-misses     #    4.01% of all L1-dcache hits    (41.41%)
+       167,776,993      LLC-load-misses           #   37.03% of all LL-cache hits     (29.98%)
+       453,040,434      LLC-loads                                                     (37.12%)
+       116,435,657      LLC-store-misses                                              (24.15%)
+       214,617,139      LLC-stores                                                    (24.17%)
+
+       3.259607250 seconds time elapsed
+
+     154.950454000 seconds user
+       0.577009000 seconds sys

@@ -1,0 +1,20 @@
+# started on Sun Nov 17 17:40:27 2024
+
+
+ Performance counter stats for './fluid_sim_seq':
+
+   172,195,659,679      instructions              #    2.83  insn per cycle                                              (37.50%)
+    60,843,151,250      cycles                                                        (50.00%)
+    37,773,814,680      L1-dcache-loads                                               (50.00%)
+     1,955,603,276      L1-dcache-load-misses     #    5.18% of all L1-dcache hits    (25.00%)
+           441,281      LLC-load-misses           #    0.37% of all LL-cache hits     (25.00%)
+       118,838,140      LLC-loads                                                     (37.50%)
+           370,596      LLC-store-misses                                              (25.00%)
+         5,636,625      LLC-stores                                                    (25.00%)
+
+      19.374814571 seconds time elapsed
+
+      19.345045000 seconds user
+       0.024997000 seconds sys
+
+

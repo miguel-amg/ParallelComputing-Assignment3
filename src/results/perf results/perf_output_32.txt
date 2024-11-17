@@ -1,0 +1,20 @@
+# started on Sun Nov 17 17:30:21 2024
+
+
+ Performance counter stats for './fluid_sim_par':
+
+   284,523,554,411      instructions              #    1.03  insn per cycle                                              (36.89%)
+   275,742,470,072      cycles                                                        (48.63%)
+    53,433,142,968      L1-dcache-loads                                               (45.60%)
+     2,145,667,790      L1-dcache-load-misses     #    4.02% of all L1-dcache hits    (37.05%)
+        85,979,600      LLC-load-misses           #   34.12% of all LL-cache hits     (31.23%)
+       251,997,432      LLC-loads                                                     (38.16%)
+        67,152,826      LLC-store-misses                                              (24.60%)
+       137,103,991      LLC-stores                                                    (24.60%)
+
+       3.126315719 seconds time elapsed
+
+      99.134118000 seconds user
+       0.266924000 seconds sys
+
+
