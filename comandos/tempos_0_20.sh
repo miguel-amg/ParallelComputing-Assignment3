@@ -9,7 +9,7 @@ cd src
 module load gcc/11.2.0 
 make par
 
-for threads in {1..40}; do
+for threads in {1..20}; do
     echo "Running with OMP_NUM_THREADS=$threads"
     export OMP_NUM_THREADS=$threads
     time ./fluid_sim_par

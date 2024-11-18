@@ -50,7 +50,7 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
     do {
         max_c = 0.0f;
         
-        // Alteração da ordem dos loops para (k, j, i)
+        // Alteração da ordem dos loops para (k, j, i) <----------------------------------------------- ALTERAÇÃO
         for (int k = 1; k <= O; k++) {
             for (int j = 1; j <= N; j++) {
                 for (int i = 1 + (j + k) % 2; i <= M; i += 2) {
@@ -68,7 +68,7 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
             }
         }
 
-        // Segunda parte do Red-Black com a nova ordem de loops (k, j, i)
+        // Alteração da ordem dos loops para (k, j, i) <----------------------------------------------- ALTERAÇÃO
         for (int k = 1; k <= O; k++) {
             for (int j = 1; j <= N; j++) {
                 for (int i = 1 + (j + k + 1) % 2; i <= M; i += 2) {
@@ -90,7 +90,8 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
     } while (max_c > tol && ++l < 20);
 }
 ```
-# Versão 2 
+
+# Versão 2 (lin_solve) 
 ```
 void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c) {
     float tol = 1e-7, max_c, old_x, change;
@@ -141,7 +142,8 @@ void lin_solve(int M, int N, int O, int b, float *x, float *x0, float a, float c
     } while (max_c > tol && ++l < 20);
 }
 ```
-# Versão 3 
+
+# Versão 3 (set_bnd)
 ```
 void set_bnd(int M, int N, int O, int b, float *x) {
   int i, j;
@@ -221,7 +223,7 @@ void set_bnd(int M, int N, int O, int b, float *x) {
 }
 ```
 
-# Versão 4
+# Versão 4 (add_source)
 ## Antes
 ```
 // Add sources (density or velocity)
@@ -247,7 +249,7 @@ void add_source(int M, int N, int O, float *x, float *s, float dt) {
 }
 ```
 
-# Versão 5
+# Versão 5 (advect)
 ## Antes
 ```
 // Advection step (uses velocity field to move quantities)
@@ -358,5 +360,98 @@ void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v,
     }
   }
   set_bnd(M, N, O, b, d);
+}
+```
+
+# Versão 6 (project)
+## Antes
+```
+// Projection step to ensure incompressibility (make the velocity field
+// divergence-free)
+void project(int M, int N, int O, float *u, float *v, float *w, float *p, float *div) {
+  const float max= -0.5f/MAX(M, MAX(N, O));
+
+  for (int k = 1; k <= O; k++) {          
+    for (int j = 1; j <= N; j++) {       
+      int idx_base = IX(0, j, k);       
+      for (int i = 1; i <= M; i++) {     
+        int idx = idx_base + i;          
+
+        float du= u[idx + 1] - u[idx - 1];                              
+        float dv= v[idx + (M + 2)] - v[idx - (M + 2)];                     
+        float dw= w[idx + (M + 2) * (N + 2)] - w[idx - (M + 2) * (N + 2)]; 
+
+        div[idx]= max * (du + dv + dw); 
+        p[idx] = 0;                     
+      }
+    }
+  }
+
+  set_bnd(M, N, O, 0, div);
+  set_bnd(M, N, O, 0, p);
+  lin_solve(M, N, O, 0, p, div, 1, 6);
+
+  for (int k = 1; k <= O; k++) {     
+    for (int j = 1; j <= N; j++) {  
+      int idx_base = IX(0, j, k);   
+      for (int i = 1; i <= M; i++) { 
+        int idx = idx_base + i;      
+        u[idx] -= 0.5f * (p[idx + 1] - p[idx - 1]);                                 
+        v[idx] -= 0.5f * (p[idx + (M + 2)] - p[idx - (M + 2)]);                     
+        w[idx] -= 0.5f * (p[idx + (M + 2) * (N + 2)] - p[idx - (M + 2) * (N + 2)]); 
+      }
+    }
+  }
+  
+  set_bnd(M, N, O, 1, u);
+  set_bnd(M, N, O, 2, v);
+  set_bnd(M, N, O, 3, w);
+}
+```
+
+## Depois
+```
+// Projection step to ensure incompressibility (make the velocity field
+// divergence-free)
+void project(int M, int N, int O, float *u, float *v, float *w, float *p, float *div) {
+  const float max= -0.5f/MAX(M, MAX(N, O));
+
+  #pragma omp parallel for  // <---------------------------------------------- ADICIONADO PRAGMA
+  for (int k = 1; k <= O; k++) {          // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+    for (int j = 1; j <= N; j++) {        // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+      int idx_base = IX(0, j, k);         // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+      for (int i = 1; i <= M; i++) {      // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+        int idx = idx_base + i;           // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+
+        float du= u[idx + 1] - u[idx - 1];                                 // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+        float dv= v[idx + (M + 2)] - v[idx - (M + 2)];                     // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+        float dw= w[idx + (M + 2) * (N + 2)] - w[idx - (M + 2) * (N + 2)]; // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+
+        div[idx]= max * (du + dv + dw); // NÃO LEVANTA DATA RACE, confirmei atráves de calculos matemáticos
+        p[idx] = 0;                     // NÃO LEVANTA DATA RACE, confirmei atráves de calculos matemáticos
+      }
+    }
+  }
+
+  set_bnd(M, N, O, 0, div);
+  set_bnd(M, N, O, 0, p);
+  lin_solve(M, N, O, 0, p, div, 1, 6);
+
+  #pragma omp parallel for  // <---------------------------------------------- ADICIONADO PRAGMA
+  for (int k = 1; k <= O; k++) {     // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+    for (int j = 1; j <= N; j++) {   // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+      int idx_base = IX(0, j, k);    // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+      for (int i = 1; i <= M; i++) { // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+        int idx = idx_base + i;      // NÃO LEVANTA DATA RACE PORQUE É DECLARADA AQUI
+        u[idx] -= 0.5f * (p[idx + 1] - p[idx - 1]);                                 // NÃO LEVANTA DATA RACE, confirmei atráves de calculos matemáticos
+        v[idx] -= 0.5f * (p[idx + (M + 2)] - p[idx - (M + 2)]);                     // NÃO LEVANTA DATA RACE, confirmei atráves de calculos matemáticos
+        w[idx] -= 0.5f * (p[idx + (M + 2) * (N + 2)] - p[idx - (M + 2) * (N + 2)]); // NÃO LEVANTA DATA RACE, confirmei atráves de calculos matemáticos
+      }
+    }
+  }
+
+  set_bnd(M, N, O, 1, u);
+  set_bnd(M, N, O, 2, v);
+  set_bnd(M, N, O, 3, w);
 }
 ```
