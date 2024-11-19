@@ -1,1 +1,0 @@
-sbatch --partition=cpar --cpus-per-task=40 run.sh

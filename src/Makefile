@@ -1,24 +1,20 @@
-CPP = g++
-FLAGS_SEQ = -Wall -Ofast -funroll-loops -ftree-vectorize -mtune=native -march=native
-FLAGS_PAR = -Wall -Ofast -funroll-loops -ftree-vectorize -mtune=native -march=native -fopenmp
-SRCS_PAR = main.cpp fluid_solver_par.cpp EventManager.cpp
-SRCS_SEQ = main.cpp fluid_solver_seq.cpp EventManager.cpp
+CPP = g++ -Wall -fopenmp -Ofast
+SRCS = main.cpp fluid_solver.cpp EventManager.cpp
 
-all: seq par
+all: phase2
 
-seq:
-	$(CPP) $(FLAGS_SEQ) $(SRCS_SEQ) -o fluid_sim_seq
-
-par:
-	$(CPP) $(FLAGS_PAR) $(SRCS_PAR) -o fluid_sim_par
+phase2:
+	module load gcc/11.2.0 && $(CPP) $(SRCS) -o fluid_sim
 
 clean:
 	@echo Cleaning up...
-	@rm -f fluid_sim_par fluid_sim_seq
+	@rm -f fluid_sim
 	@echo Done.
 
 runseq:
-	./fluid_sim_seq
+	export OMP_NUM_THREADS=1 && \
+	./fluid_sim
 
 runpar:
-	./fluid_sim_par
+	export OMP_NUM_THREADS=21 && \
+	./fluid_sim
