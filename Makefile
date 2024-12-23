@@ -12,11 +12,11 @@ clean:
 	@rm -f fluid_sim
 	@echo Done.
 
-runseq: all
+runseq: 
 	export OMP_NUM_THREADS=1 && \
 	./fluid_sim
 
-runpar: all
+runpar: 
 	export OMP_NUM_THREADS=21 && \
 	./fluid_sim
 
