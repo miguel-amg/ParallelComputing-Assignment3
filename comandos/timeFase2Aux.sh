@@ -1,8 +1,10 @@
 #!/bin/sh
 #SBATCH --exclusive
 #SBATCH --time=02:00
-#SBATCH --partition=cpar 
-#SBATCH --cpus-per-task=40
+#SBATCH --partition day
+#SBATCH --cpus-per-task=48
+#SBATCH --constraint=c24
+#SBATCH --ntasks=1
 
 cd ..
 
