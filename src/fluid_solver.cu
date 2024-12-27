@@ -64,81 +64,131 @@ void set_bnd(int M, int N, int O, int b, float *x) {
 
 
 
-__global__ void lin_solve_kernel(float *x, float *x0, float a, float c, int M, int N, int O, int parity, float *max_change){
-
-    // Coordenadas globais
+__global__ void lin_solve_kernel(
+    float *x, float *x0, float a, float c,
+    int M, int N, int O, int parity,
+    float *max_change)
+{
+    // Índices globais (1..M, 1..N, 1..O)
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
     int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
     int k = blockIdx.z * blockDim.z + threadIdx.z + 1;
 
-    // Verificar se está dentro dos limites
-    if (i > M || j > N || k > O) return;
+    // Índice local do thread para redução
+    int local_id = threadIdx.z * blockDim.y * blockDim.x 
+                 + threadIdx.y * blockDim.x
+                 + threadIdx.x;
 
-    // Verifica a paridade
-    if ((i + j + k) % 2 != parity) return;
+    // Memória compartilhada dinâmica, para fazer redução local
+    extern __shared__ float sdata[];
+    sdata[local_id] = 0.0f;
 
-    // Cálculo principal
-    int idx = IX(i, j, k);
-    float old_x = x[idx];
-    x[idx] = (x0[idx] +
-              a * (x[IX(i - 1, j, k)] + x[IX(i + 1, j, k)] +
-                   x[IX(i, j - 1, k)] + x[IX(i, j + 1, k)] +
-                   x[IX(i, j, k - 1)] + x[IX(i, j, k + 1)])) * c;
+    // Se estiver dentro do domínio e a paridade bater, faz a atualização
+    if (i <= M && j <= N && k <= O && ((i + j + k) % 2 == parity))
+    {
+        int idx = IX(i, j, k);
 
-    // Calcula a mudança máxima local
-    float change = fabsf(x[idx] - old_x);
-    atomicMax((int*)max_change, __float_as_int(change)); // Atualiza max_change globa
+        float old_x = x[idx];
+        x[idx] = (x0[idx] +
+                  a * (x[IX(i - 1, j, k)] + x[IX(i + 1, j, k)] +
+                       x[IX(i, j - 1, k)] + x[IX(i, j + 1, k)] +
+                       x[IX(i, j, k - 1)] + x[IX(i, j, k + 1)])) * c;
+
+        float change = fabsf(x[idx] - old_x);
+        // Armazena localmente para reduzir
+        sdata[local_id] = change;
+    }
+
+    __syncthreads();
+
+    // Redução em log2(numThreads) passos
+    int stride = blockDim.x * blockDim.y * blockDim.z / 2;
+    while (stride > 0)
+    {
+        if (local_id < stride)
+        {
+            sdata[local_id] = fmaxf(sdata[local_id], sdata[local_id + stride]);
+        }
+        __syncthreads();
+        stride /= 2;
+    }
+
+    // Thread 0 do bloco escreve o max local em max_change (global)
+    if (local_id == 0)
+    {
+        atomicMax((int*) max_change, __float_as_int(sdata[0]));
+    }
 }
 
+// ----------------------------------------------------------------------------
+// Solver que chama o kernel otimizado
+// ----------------------------------------------------------------------------
 
-void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __restrict__ x0, float a, float c) {
+void lin_solve(int M, int N, int O, int b,
+               float * __restrict__ x, float * __restrict__ x0,
+               float a, float c)
+{
     const float tol = 1e-7f;
     const float inv_c = 1.0f / c;
-    int l = 0;
 
     // Configuração de threads e blocos
     dim3 threadsPerBlock(8, 8, 8);
-    dim3 numBlocks((M + threadsPerBlock.x - 1) / threadsPerBlock.x,
-                   (N + threadsPerBlock.y - 1) / threadsPerBlock.y,
-                   (O + threadsPerBlock.z - 1) / threadsPerBlock.z);
+    dim3 numBlocks( (M + threadsPerBlock.x - 1) / threadsPerBlock.x,
+                    (N + threadsPerBlock.y - 1) / threadsPerBlock.y,
+                    (O + threadsPerBlock.z - 1) / threadsPerBlock.z );
 
-    // Alocar variáveis no dispositivo
+    // Alocar vetores no device
     float* d_x;
     float* d_x0;
     float* d_max_change;
-    cudaMalloc(&d_x, sizeof(float) * (M+2)  * (N+2)  * (O+2));
-    cudaMalloc(&d_x0, sizeof(float) * (M+2)  * (N+2)  * (O+2)  );
+    cudaMalloc(&d_x,  sizeof(float) * (M+2)*(N+2)*(O+2));
+    cudaMalloc(&d_x0, sizeof(float) * (M+2)*(N+2)*(O+2));
     cudaMalloc(&d_max_change, sizeof(float));
 
-    // Copiar dados para o dispositivo
-    cudaMemcpy(d_x, x, sizeof(float) * (M+2)  * (N+2) * (O+2) , cudaMemcpyHostToDevice);
-    cudaMemcpy(d_x0, x0, sizeof(float) * (M+2)  * (N+2)  * (O+2) , cudaMemcpyHostToDevice);
+    // Copiar dados para o device
+    cudaMemcpy(d_x,  x,  sizeof(float) * (M+2)*(N+2)*(O+2), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_x0, x0, sizeof(float) * (M+2)*(N+2)*(O+2), cudaMemcpyHostToDevice);
 
+    int l = 0;
     float max_change;
     do {
         max_change = 0.0f;
         cudaMemcpy(d_max_change, &max_change, sizeof(float), cudaMemcpyHostToDevice);
 
-        // Executar kernel para paridade 0
-        lin_solve_kernel<<<numBlocks, threadsPerBlock>>>(d_x, d_x0, a, inv_c, M, N, O, 0, d_max_change);
-        cudaDeviceSynchronize();
+        // Lançar kernel para paridade 0
+        lin_solve_kernel<<<
+            numBlocks, 
+            threadsPerBlock,
+            threadsPerBlock.x * threadsPerBlock.y * threadsPerBlock.z * sizeof(float)
+        >>>(d_x, d_x0, a, inv_c, M, N, O, 0, d_max_change);
 
-        // Executar kernel para paridade 1
-        lin_solve_kernel<<<numBlocks, threadsPerBlock>>>(d_x, d_x0, a, inv_c, M, N, O, 1, d_max_change);
+        // Lançar kernel para paridade 1
+        lin_solve_kernel<<<
+            numBlocks, 
+            threadsPerBlock,
+            threadsPerBlock.x * threadsPerBlock.y * threadsPerBlock.z * sizeof(float)
+        >>>(d_x, d_x0, a, inv_c, M, N, O, 1, d_max_change);
+
+        // Uma só sincronização no final
         cudaDeviceSynchronize();
 
         // Copiar de volta a mudança máxima
         cudaMemcpy(&max_change, d_max_change, sizeof(float), cudaMemcpyDeviceToHost);
 
+        l++;
+
     } while (max_change > tol && l < 20);
 
-    // Copiar resultados de volta para o host
-    cudaMemcpy(x, d_x, sizeof(float) * (M+2)  * (N+2)  * (O+2) , cudaMemcpyDeviceToHost);
+    // Copiar resultados de volta
+    cudaMemcpy(x, d_x, sizeof(float) * (M+2)*(N+2)*(O+2), cudaMemcpyDeviceToHost);
 
-    // Liberar memória do dispositivo
+    // Liberar memória
     cudaFree(d_x);
     cudaFree(d_x0);
     cudaFree(d_max_change);
+
+    // Impor condições de fronteira (no final, pois b pode ser != 0)
+    set_bnd(M, N, O, b, x);
 }
 
 
