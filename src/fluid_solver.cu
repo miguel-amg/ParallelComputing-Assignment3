@@ -22,6 +22,7 @@
 
 extern "C" void lin_solve_cuda(int M, int N, int O, int b, float* x, float* x0, float a, float c);
 
+// ----------------------------------------------------------------------------------------------------------------------------------------------
 
 void add_source(int M, int N, int O, float *x, float *s, float dt) {
     int size = (M + 2) * (N + 2) * (O + 2);
@@ -30,6 +31,8 @@ void add_source(int M, int N, int O, float *x, float *s, float dt) {
         x[i] += dt * s[i];
     }
 }
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------
 
 void set_bnd(int M, int N, int O, int b, float *x) {
     #pragma omp parallel for
@@ -63,6 +66,7 @@ void set_bnd(int M, int N, int O, int b, float *x) {
 }   
 
 
+// ----------------------------------------------------------------------------------------------------------------------------------------------
 
 __global__ void lin_solve_kernel(
     float *x, float *x0, float a, float c,
@@ -191,12 +195,15 @@ void lin_solve(int M, int N, int O, int b,
     set_bnd(M, N, O, b, x);
 }
 
+// ----------------------------------------------------------------------------------------------------------------------------------------------
 
 void diffuse(int M, int N, int O, int b, float *x, float *x0, float diff, float dt) {
     int max = MAX(MAX(M, N), O);
     float a = dt * diff * max * max;
     lin_solve(M, N, O, b, x, x0, a, 1 + 6 * a);
 }
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------
 
 void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v, float *w, float dt) {
     float dtX = dt * M;
@@ -241,6 +248,8 @@ void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v,
     set_bnd(M, N, O, b, d);
 }
 
+// ----------------------------------------------------------------------------------------------------------------------------------------------
+
 void project(int M, int N, int O, float *u, float *v, float *w, float *p, float *div) {
     const float h = -0.5f / MAX(M, MAX(N, O));
 
@@ -278,6 +287,8 @@ void project(int M, int N, int O, float *u, float *v, float *w, float *p, float 
     set_bnd(M, N, O, 3, w);
 }
 
+// ----------------------------------------------------------------------------------------------------------------------------------------------
+
 void dens_step(int M, int N, int O, float *x, float *x0, float *u, float *v, float *w, float diff, float dt) {
     add_source(M, N, O, x, x0, dt);
     SWAP(x0, x);
@@ -285,6 +296,8 @@ void dens_step(int M, int N, int O, float *x, float *x0, float *u, float *v, flo
     SWAP(x0, x);
     advect(M, N, O, 0, x, x0, u, v, w, dt);
 }
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------
 
 void vel_step(int M, int N, int O, float *u, float *v, float *w, float *u0, float *v0, float *w0, float visc, float dt) {
     add_source(M, N, O, u, u0, dt);
