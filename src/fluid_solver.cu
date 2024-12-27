@@ -2,12 +2,26 @@
 #include <cmath>
 #include <cstring>
 #include <omp.h>
+#include <cuda_runtime.h>
+#include <device_launch_parameters.h>
+#include <cmath>
+#include <algorithm>
+
+#include <cstdlib>
+#include <iostream>
+#include <sys/time.h>
+#include <cuda.h>
+#include <chrono>
+
 
 #define IX(i, j, k) ((i) + (M + 2) * (j) + (M + 2) * (N + 2) * (k))
 #define SWAP(x0, x) \
     { float *tmp = x0; x0 = x; x = tmp; }
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define LINEARSOLVERTIMES 20
+
+extern "C" void lin_solve_cuda(int M, int N, int O, int b, float* x, float* x0, float a, float c);
+
 
 void add_source(int M, int N, int O, float *x, float *s, float dt) {
     int size = (M + 2) * (N + 2) * (O + 2);
@@ -46,48 +60,87 @@ void set_bnd(int M, int N, int O, int b, float *x) {
     x[IX(M + 1, 0, 0)] = 0.33f * (x[IX(M, 0, 0)] + x[IX(M + 1, 1, 0)] + x[IX(M + 1, 0, 1)]);
     x[IX(0, N + 1, 0)] = 0.33f * (x[IX(1, N + 1, 0)] + x[IX(0, N, 0)] + x[IX(0, N + 1, 1)]);
     x[IX(M + 1, N + 1, 0)] = 0.33f * (x[IX(M, N + 1, 0)] + x[IX(M + 1, N, 0)] + x[IX(M + 1, N + 1, 1)]);
+}   
+
+
+
+__global__ void lin_solve_kernel(float *x, float *x0, float a, float c, int M, int N, int O, int parity, float *max_change){
+
+    // Coordenadas globais
+    int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
+    int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
+    int k = blockIdx.z * blockDim.z + threadIdx.z + 1;
+
+    // Verificar se está dentro dos limites
+    if (i > M || j > N || k > O) return;
+
+    // Verifica a paridade
+    if ((i + j + k) % 2 != parity) return;
+
+    // Cálculo principal
+    int idx = IX(i, j, k);
+    float old_x = x[idx];
+    x[idx] = (x0[idx] +
+              a * (x[IX(i - 1, j, k)] + x[IX(i + 1, j, k)] +
+                   x[IX(i, j - 1, k)] + x[IX(i, j + 1, k)] +
+                   x[IX(i, j, k - 1)] + x[IX(i, j, k + 1)])) * c;
+
+    // Calcula a mudança máxima local
+    float change = fabsf(x[idx] - old_x);
+    atomicMax((int*)max_change, __float_as_int(change)); // Atualiza max_change globa
 }
+
 
 void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __restrict__ x0, float a, float c) {
-    float tol = 1e-7, max_c, old_x, change;
-    int l = 0;
+    const float tol = 1e-7f;
     const float inv_c = 1.0f / c;
+    int l = 0;
+
+    // Configuração de threads e blocos
+    dim3 threadsPerBlock(8, 8, 8);
+    dim3 numBlocks((M + threadsPerBlock.x - 1) / threadsPerBlock.x,
+                   (N + threadsPerBlock.y - 1) / threadsPerBlock.y,
+                   (O + threadsPerBlock.z - 1) / threadsPerBlock.z);
+
+    // Alocar variáveis no dispositivo
+    float* d_x;
+    float* d_x0;
+    float* d_max_change;
+    cudaMalloc(&d_x, sizeof(float) * (M+2)  * (N+2)  * (O+2));
+    cudaMalloc(&d_x0, sizeof(float) * (M+2)  * (N+2)  * (O+2)  );
+    cudaMalloc(&d_max_change, sizeof(float));
+
+    // Copiar dados para o dispositivo
+    cudaMemcpy(d_x, x, sizeof(float) * (M+2)  * (N+2) * (O+2) , cudaMemcpyHostToDevice);
+    cudaMemcpy(d_x0, x0, sizeof(float) * (M+2)  * (N+2)  * (O+2) , cudaMemcpyHostToDevice);
+
+    float max_change;
     do {
-        max_c = 0.0f;
-        #pragma omp parallel for schedule(static) reduction(max:max_c) private(old_x, change)
-        for (int k = 1; k <= O; k++) {
-            for (int j = 1; j <= N; j++) {
-                for (int i = 1 + (j + k) % 2; i <= M; i += 2) {
-                    old_x = x[IX(i, j, k)];
-                    x[IX(i, j, k)] = (x0[IX(i, j, k)] +
-                                      a * (x[IX(i - 1, j, k)] + x[IX(i + 1, j, k)] +
-                                           x[IX(i, j - 1, k)] + x[IX(i, j + 1, k)] +
-                                           x[IX(i, j, k - 1)] + x[IX(i, j, k + 1)])) * inv_c;
-                    change = fabs(x[IX(i, j, k)] - old_x);
-                    max_c = MAX(max_c, change);
-                }
-            }
-        }
+        max_change = 0.0f;
+        cudaMemcpy(d_max_change, &max_change, sizeof(float), cudaMemcpyHostToDevice);
 
-        #pragma omp parallel for schedule(static) reduction(max:max_c) private(old_x, change)
-        for (int k = 1; k <= O; k++) {
-            for (int j = 1; j <= N; j++) {
-                for (int i = 1 + (j + k + 1) % 2; i <= M; i += 2) {
-                    old_x = x[IX(i, j, k)];
-                    x[IX(i, j, k)] = (x0[IX(i, j, k)] +
-                                      a * (x[IX(i - 1, j, k)] + x[IX(i + 1, j, k)] +
-                                           x[IX(i, j - 1, k)] + x[IX(i, j + 1, k)] +
-                                           x[IX(i, j, k - 1)] + x[IX(i, j, k + 1)])) * inv_c;
-                    change = fabs(x[IX(i, j, k)] - old_x);
-                    max_c = MAX(max_c, change);
-                }
-            }
-        }
+        // Executar kernel para paridade 0
+        lin_solve_kernel<<<numBlocks, threadsPerBlock>>>(d_x, d_x0, a, inv_c, M, N, O, 0, d_max_change);
+        cudaDeviceSynchronize();
 
-        set_bnd(M, N, O, b, x);
+        // Executar kernel para paridade 1
+        lin_solve_kernel<<<numBlocks, threadsPerBlock>>>(d_x, d_x0, a, inv_c, M, N, O, 1, d_max_change);
+        cudaDeviceSynchronize();
 
-    } while (max_c > tol && ++l < 20);
+        // Copiar de volta a mudança máxima
+        cudaMemcpy(&max_change, d_max_change, sizeof(float), cudaMemcpyDeviceToHost);
+
+    } while (max_change > tol && l < 20);
+
+    // Copiar resultados de volta para o host
+    cudaMemcpy(x, d_x, sizeof(float) * (M+2)  * (N+2)  * (O+2) , cudaMemcpyDeviceToHost);
+
+    // Liberar memória do dispositivo
+    cudaFree(d_x);
+    cudaFree(d_x0);
+    cudaFree(d_max_change);
 }
+
 
 void diffuse(int M, int N, int O, int b, float *x, float *x0, float diff, float dt) {
     int max = MAX(MAX(M, N), O);

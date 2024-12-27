@@ -1,15 +1,15 @@
-CPP = g++ -Wall -fopenmp -Ofast
-SRCS = src/main.cpp src/fluid_solver.cpp src/EventManager.cpp
+CXX = nvcc
+FLAGS = --compiler-options -Wall -O3 -g -std=c++11 -arch=sm_35 -Wno-deprecated-gpu-targets -Xcompiler -fopenmp
+SRCS = src/main.cpp src/fluid_solver.cu src/EventManager.cpp
 
-all: phase2
+all: phase3
 
-phase2:
-	$(CPP) $(SRCS) -o fluid_sim
-	cp src/events.txt ./ 
+phase3:
+	$(CXX) $(FLAGS) $(SRCS) -o fluid_sim
 
 clean:
 	@echo Cleaning up...
-	@rm -f fluid_sim
+	@rm fluid_sim
 	@echo Done.
 
 runseq: 
@@ -20,4 +20,4 @@ runpar:
 	export OMP_NUM_THREADS=21 && \
 	./fluid_sim
 
-# Nota: Events.txt é copiado para a diretoria do executavel para não ocorrer o erro "Error opening file: events.txt" 
+# Nota: Events.txt é copiado para a diretoria do executavel para não ocorrer o erro "Error opening file: events.txt"
