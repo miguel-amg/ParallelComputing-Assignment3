@@ -68,11 +68,7 @@ void set_bnd(int M, int N, int O, int b, float *x) {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
 
-__global__ void lin_solve_kernel(
-    float *x, float *x0, float a, float c,
-    int M, int N, int O, int parity,
-    float *max_change)
-{
+__global__ void lin_solve_kernel(float *x, float *x0, float a, float c, int M, int N, int O, int parity, float *max_change){
     // Índices globais (1..M, 1..N, 1..O)
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
     int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
@@ -128,10 +124,7 @@ __global__ void lin_solve_kernel(
 // Solver que chama o kernel otimizado
 // ----------------------------------------------------------------------------
 
-void lin_solve(int M, int N, int O, int b,
-               float * __restrict__ x, float * __restrict__ x0,
-               float a, float c)
-{
+void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __restrict__ x0, float a, float c){
     const float tol = 1e-7f;
     const float inv_c = 1.0f / c;
 

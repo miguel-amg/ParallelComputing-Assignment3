@@ -25,6 +25,8 @@
         "BUILD_SIMPLE_TEST": false
     },
     "files.associations": {
+        "*.ndjson": "jsonl",
+        "*.dbclient-js": "javascript",
         "fstream": "cpp",
         "array": "cpp",
         "atomic": "cpp",
@@ -87,6 +89,9 @@
         "streambuf": "cpp",
         "thread": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "format": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp"
     },
 }
