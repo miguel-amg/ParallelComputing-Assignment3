@@ -20,7 +20,6 @@
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define LINEARSOLVERTIMES 20
 
-extern "C" void lin_solve_cuda(int M, int N, int O, int b, float* x, float* x0, float a, float c);
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
 
