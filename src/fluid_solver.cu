@@ -20,62 +20,61 @@
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define LINEARSOLVERTIMES 20
 
+void print_gpu_array(int M, int N, int O, float *d_x) {
+    int size = (M + 2) * (N + 2) * (O + 2);
+
+    // Alocar memória temporária no CPU
+    float *h_x = new float[size];
+
+    // Copiar o array da GPU para o CPU
+    cudaMemcpy(h_x, d_x, size * sizeof(float), cudaMemcpyDeviceToHost);
+
+    // Imprimir os primeiros 10 valores do array
+    printf("Valores dentro de x na GPU (copiados para CPU):\n");
+    for (int i = 0; i < 10; i++) {
+        printf("x[%d] = %f\n", i, h_x[i]);
+    }
+
+    // Libertar memória temporária
+    delete[] h_x;
+}
+
+//extern "C" void lin_solve_cuda(int M, int N, int O, int b, float* x, float* x0, float a, float c);
+
+// Variaveis externas que vem da main, utilizados para memoria gpu
+// extern float *d_u, *d_v, *d_w, *d_u_prev, *d_v_prev, *d_w_prev;
+// extern float *d_dens, *d_dens_prev;
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
 
 __global__ void add_source_kernel(int size, float *x, const float *s, float dt) {
-    // Memória shared para os arrays s e x
-    __shared__ float s_x[256];  
-    __shared__ float s_s[256];  
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-    // Calculo de indices
-    int i = blockIdx.x * blockDim.x + threadIdx.x; // Indice global 
-    int local_idx = threadIdx.x; // Indice local
-
-    // Carregar dados para a memória shared
+    // Atualizar diretamente na memória global
     if (i < size) {
-        s_x[local_idx] = x[i];
-        s_s[local_idx] = s[i];
-    }
-    __syncthreads(); // Sincronizar threads do bloco
-
-    // Atualizar os do array na memoria shared
-    if (i < size) {
-        s_x[local_idx] += dt * s_s[local_idx];
-    }
-    __syncthreads(); // Sincronizar threads do bloco
-
-    // Escrever os resultados na memoria global
-    if (i < size) {
-        x[i] = s_x[local_idx];
+        x[i] += dt * s[i];
     }
 }
 
 void add_source(int M, int N, int O, float *x, float *s, float dt) {
-    int size = (M + 2) * (N + 2) * (O + 2); // LINHA ORIGINAL
+    int size = (M + 2) * (N + 2) * (O + 2); 
 
-    // Alocar memória na GPU para os dois arrays 
-    float *d_x, *d_s;
-    cudaMalloc(&d_x, sizeof(float) * size);
-    cudaMalloc(&d_s, sizeof(float) * size);
-
-    // Copiar os dados dos dois arrays para dentro da gpu
-    cudaMemcpy(d_x, x, sizeof(float) * size, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_s, s, sizeof(float) * size, cudaMemcpyHostToDevice);
-
-    // Configuração dos blocos
-    int threadsPerBlock = 256;
+    // Configuração otimizada
+    int threadsPerBlock = 512;
     int numBlocks = (size + threadsPerBlock - 1) / threadsPerBlock;
 
     // Execução do kernel
-    add_source_kernel<<<numBlocks, threadsPerBlock>>>(size, d_x, d_s, dt);
+    add_source_kernel<<<numBlocks, threadsPerBlock>>>(size, x, s, dt);
 
-    // Copiar os resultados do kernel para o cpu
-    cudaMemcpy(x, d_x, sizeof(float) * size, cudaMemcpyDeviceToHost);
+    // Sincronizar após o kernel (apenas para debug)
+    cudaDeviceSynchronize();
 
-    // Limpar a memoria da gpu
-    cudaFree(d_x);
-    cudaFree(d_s);
+    // Verificar erros
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Erro CUDA: %s\n", cudaGetErrorString(err));
+        exit(-1);
+    }
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -119,27 +118,12 @@ __global__ void set_bnd_kernel(
 }
 
 void set_bnd(int M, int N, int O, int b, float *x) {
-    int size = (M + 2) * (N + 2) * (O + 2); // Inclui as bordas
-
-    // Alocar memória na GPU
-    float *d_x;
-    cudaMalloc(&d_x, sizeof(float) * size);
-
-    // Copiar os dados para a GPU
-    cudaMemcpy(d_x, x, sizeof(float) * size, cudaMemcpyHostToDevice);
-
     // Configuração de threads e blocos
     dim3 threadsPerBlock(8, 8, 8); // 512 threads por bloco
     dim3 numBlocks((M + 7) / 8, (N + 7) / 8, (O + 7) / 8);
 
     // Executar kernel
-    set_bnd_kernel<<<numBlocks, threadsPerBlock>>>(M, N, O, b, d_x);
-
-    // Copiar os resultados de volta para a CPU
-    cudaMemcpy(x, d_x, sizeof(float) * size, cudaMemcpyDeviceToHost);
-
-    // Liberar memória na GPU
-    cudaFree(d_x);
+    set_bnd_kernel<<<numBlocks, threadsPerBlock>>>(M, N, O, b, x);
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -210,17 +194,9 @@ void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __res
                     (N + threadsPerBlock.y - 1) / threadsPerBlock.y,
                     (O + threadsPerBlock.z - 1) / threadsPerBlock.z );
 
-    // Alocar vetores no device
-    float* d_x;
-    float* d_x0;
-    float* d_max_change;
-    cudaMalloc(&d_x,  sizeof(float) * (M+2)*(N+2)*(O+2));
-    cudaMalloc(&d_x0, sizeof(float) * (M+2)*(N+2)*(O+2));
-    cudaMalloc(&d_max_change, sizeof(float));
 
-    // Copiar dados para o device
-    cudaMemcpy(d_x,  x,  sizeof(float) * (M+2)*(N+2)*(O+2), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_x0, x0, sizeof(float) * (M+2)*(N+2)*(O+2), cudaMemcpyHostToDevice);
+    float* d_max_change;
+    cudaMalloc(&d_max_change, sizeof(float));
 
     int l = 0;
     float max_change;
@@ -233,14 +209,14 @@ void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __res
             numBlocks, 
             threadsPerBlock,
             threadsPerBlock.x * threadsPerBlock.y * threadsPerBlock.z * sizeof(float)
-        >>>(d_x, d_x0, a, inv_c, M, N, O, 0, d_max_change);
+        >>>(x, x0, a, inv_c, M, N, O, 0, d_max_change);
 
         // Lançar kernel para paridade 1
         lin_solve_kernel<<<
             numBlocks, 
             threadsPerBlock,
             threadsPerBlock.x * threadsPerBlock.y * threadsPerBlock.z * sizeof(float)
-        >>>(d_x, d_x0, a, inv_c, M, N, O, 1, d_max_change);
+        >>>(x, x0, a, inv_c, M, N, O, 1, d_max_change);
 
         // Uma só sincronização no final
         cudaDeviceSynchronize();
@@ -252,12 +228,7 @@ void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __res
 
     } while (max_change > tol && l < 20);
 
-    // Copiar resultados de volta
-    cudaMemcpy(x, d_x, sizeof(float) * (M+2)*(N+2)*(O+2), cudaMemcpyDeviceToHost);
-
     // Liberar memória
-    cudaFree(d_x);
-    cudaFree(d_x0);
     cudaFree(d_max_change);
 
     // Impor condições de fronteira (no final, pois b pode ser != 0)
@@ -274,13 +245,10 @@ void diffuse(int M, int N, int O, int b, float *x, float *x0, float diff, float 
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
 
-__global__ void advect_kernel_shared(
-    int M, int N, int O, int b, float *d, const float *d0,
-    const float *u, const float *v, const float *w, float dt) {
-
+__global__ void advect_kernel(int M, int N, int O, int b, float *d, const float *d0, const float *u, const float *v, const float *w, float dt) {
     // Shared memory para os dados locais
     __shared__ float s_d0[8][8][8]; // Ajustar para o tamanho do bloco
-
+    
     // Índices 3D globais
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
     int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
@@ -332,40 +300,12 @@ __global__ void advect_kernel_shared(
 }
 
 void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v, float *w, float dt) {
-    int size = (M + 2) * (N + 2) * (O + 2); // Tamanho total
-
-    // Alocar memória na GPU
-    float *d_d, *d_d0, *d_u, *d_v, *d_w;
-    cudaMalloc(&d_d, sizeof(float) * size);
-    cudaMalloc(&d_d0, sizeof(float) * size);
-    cudaMalloc(&d_u, sizeof(float) * size);
-    cudaMalloc(&d_v, sizeof(float) * size);
-    cudaMalloc(&d_w, sizeof(float) * size);
-
-    // Copiar dados para a GPU
-    cudaMemcpy(d_d, d, sizeof(float) * size, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_d0, d0, sizeof(float) * size, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_u, u, sizeof(float) * size, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v, v, sizeof(float) * size, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_w, w, sizeof(float) * size, cudaMemcpyHostToDevice);
-
     // Configuração de threads e blocos
     dim3 threadsPerBlock(8, 8, 8);
     dim3 numBlocks((M + 7) / 8, (N + 7) / 8, (O + 7) / 8);
 
     // Executar kernel
-    advect_kernel_shared<<<numBlocks, threadsPerBlock>>>(
-        M, N, O, b, d_d, d_d0, d_u, d_v, d_w, dt);
-
-    // Copiar resultado de volta para a CPU
-    cudaMemcpy(d, d_d, sizeof(float) * size, cudaMemcpyDeviceToHost);
-
-    // Liberar memória
-    cudaFree(d_d);
-    cudaFree(d_d0);
-    cudaFree(d_u);
-    cudaFree(d_v);
-    cudaFree(d_w);
+    advect_kernel<<<numBlocks, threadsPerBlock>>>(M, N, O, b, d, d0, u, v, w, dt);
 
     // Aplicar condições de contorno na CPU (ou implementar em CUDA depois)
     set_bnd(M, N, O, b, d);
@@ -373,37 +313,52 @@ void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v,
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
 
+__global__ void project_kernel_1 (int M, int N, int O, float *u, float *v, float *w, float *p, float *div, float h) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
+    int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
+    int k = blockIdx.z * blockDim.z + threadIdx.z + 1;
+
+    if (i > 1 && i <= M && j > 1 && j <= N && k > 1 && k <= O) { // Verificação de bordas
+        int idx = IX(i, j, k);
+        float du = u[idx + 1] - u[idx - 1];
+        float dv = v[idx + (M + 2)] - v[idx - (M + 2)];
+        float dw = w[idx + (M + 2) * (N + 2)] - w[idx - (M + 2) * (N + 2)];
+        div[idx] = h * (du + dv + dw);
+        p[idx] = 0.0f;
+    }
+}
+
+__global__ void project_kernel_2 (int M, int N, int O, float *u, float *v, float *w, float *p) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
+    int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
+    int k = blockIdx.z * blockDim.z + threadIdx.z + 1;
+
+    if (i <= M && j <= N && k <= O) {   
+        int idx = IX(i, j, k);
+        u[idx] -= 0.5f * (p[idx + 1] - p[idx - 1]);
+        v[idx] -= 0.5f * (p[idx + (M + 2)] - p[idx - (M + 2)]);
+        w[idx] -= 0.5f * (p[idx + (M + 2) * (N + 2)] - p[idx - (M + 2) * (N + 2)]);
+    }
+}
+
 void project(int M, int N, int O, float *u, float *v, float *w, float *p, float *div) {
     const float h = -0.5f / MAX(M, MAX(N, O));
 
-    #pragma omp parallel for collapse(3)
-    for (int k = 1; k <= O; k++) {
-        for (int j = 1; j <= N; j++) {
-            for (int i = 1; i <= M; i++) {
-                int idx = IX(i, j, k);
-                float du = u[idx + 1] - u[idx - 1];
-                float dv = v[idx + (M + 2)] - v[idx - (M + 2)];
-                float dw = w[idx + (M + 2) * (N + 2)] - w[idx - (M + 2) * (N + 2)];
-                div[idx] = h * (du + dv + dw);
-                p[idx] = 0.0f;
-            }
-        }
-    }
+    // Configurar blocos e threads
+    dim3 threadsPerBlock(8, 8, 8);
+    dim3 numBlocks((M + 7) / 8, (N + 7) / 8, (O + 7) / 8);
+
+    // Kernel 1 - Calcular div e inicializar p
+    project_kernel_1<<<numBlocks, threadsPerBlock>>>(M, N, O, u, v, w, p, div, h);
+    cudaDeviceSynchronize();
+
     set_bnd(M, N, O, 0, div);
     set_bnd(M, N, O, 0, p);
     lin_solve(M, N, O, 0, p, div, 1, 6);
 
-    #pragma omp parallel for collapse(3)
-    for (int k = 1; k <= O; k++) {
-        for (int j = 1; j <= N; j++) {
-            for (int i = 1; i <= M; i++) {
-                int idx = IX(i, j, k);
-                u[idx] -= 0.5f * (p[idx + 1] - p[idx - 1]);
-                v[idx] -= 0.5f * (p[idx + (M + 2)] - p[idx - (M + 2)]);
-                w[idx] -= 0.5f * (p[idx + (M + 2) * (N + 2)] - p[idx - (M + 2) * (N + 2)]);
-            }
-        }
-    }
+    // Atualizar as velocidades
+    project_kernel_2<<<numBlocks, threadsPerBlock>>>(M, N, O, u, v, w, p);
+    cudaDeviceSynchronize();
 
     set_bnd(M, N, O, 1, u);
     set_bnd(M, N, O, 2, v);
