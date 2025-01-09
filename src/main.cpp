@@ -18,16 +18,16 @@ static float dt = 0.1f;      // Time delta
 static float diff = 0.0001f; // Diffusion constant
 static float visc = 0.0001f; // Viscosity constant
 
-
-///////////////////////////////////////////////////////////////////////////////////////
 // Fluid simulation arrays
 static float *u, *v, *w, *u_prev, *v_prev, *w_prev;
 static float *dens, *dens_prev;
 
-// Arrays a ser utilizados para o GPU <-------------------------------------
+///////////////////////////////////////////////////////////////////////////////////////
+//                              Secção dedicada ao GPU                               //
+///////////////////////////////////////////////////////////////////////////////////////
+// Arrays a ser utilizados para o GPU 
 float *d_u, *d_v, *d_w, *d_u_prev, *d_v_prev, *d_w_prev;
 float *d_dens, *d_dens_prev;
-
 
 // Alocar espaço para todos os arrays no gpu
 void gpu_allocate_arrays(int size) {
@@ -79,10 +79,11 @@ void gpu_to_cpu_arrays() {
     cudaMemcpy(dens_prev, d_dens_prev, size * sizeof(float), cudaMemcpyDeviceToHost);
 }
 
+// Inicializar os arrays a 0
 void gpu_initialize_arrays(int M, int N, int O) {
     int size = (M + 2) * (N + 2) * (O + 2) * sizeof(float);
 
-    // Inicializar todos os arrays na GPU com 0
+    // Colocar tudo a 0
     cudaMemset(d_u, 0, size);
     cudaMemset(d_v, 0, size);
     cudaMemset(d_w, 0, size);
@@ -92,14 +93,13 @@ void gpu_initialize_arrays(int M, int N, int O) {
     cudaMemset(d_dens, 0, size);
     cudaMemset(d_dens_prev, 0, size);
 
-    // Verificar erros após a inicialização
+    // Verificar erros 
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess) {
         printf("Erro ao inicializar arrays GPU: %s\n", cudaGetErrorString(err));
         exit(-1);
     }
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 // Function to allocate simulation data
@@ -149,14 +149,14 @@ void apply_events(const std::vector<Event> &events) {
     int idx = IX(i, j, k); // Índice calculado
 
     if (event.type == ADD_SOURCE) {
-      // Atualizar na CPU primeiro
+      // Atualizar no CPU primeiro
       dens[idx] = event.density;
 
       // Copiar para a GPU
       cudaMemcpy(&d_dens[idx], &dens[idx], sizeof(float), cudaMemcpyHostToDevice);
       
     } else if (event.type == APPLY_FORCE) {
-      // Atualizar na CPU primeiro
+      // Atualizar no CPU primeiro
       u[idx] = event.force.x;
       v[idx] = event.force.y;
       w[idx] = event.force.z;
@@ -213,10 +213,8 @@ int main() {
   gpu_allocate_arrays(size);
   cpu_to_gpu_arrays();
   //////////////////////////////////////////////////////////////////
-
   // Run simulation with events
   simulate(eventManager, timesteps);
-
   //////////////////////////////////////////////////////////////////
   // Recolher os resultados
   gpu_to_cpu_arrays();

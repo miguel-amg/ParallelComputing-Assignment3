@@ -13,121 +13,73 @@
 #include <cuda.h>
 #include <chrono>
 
-
 #define IX(i, j, k) ((i) + (M + 2) * (j) + (M + 2) * (N + 2) * (k))
 #define SWAP(x0, x) \
     { float *tmp = x0; x0 = x; x = tmp; }
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define LINEARSOLVERTIMES 20
 
-void print_gpu_array(int M, int N, int O, float *d_x) {
-    int size = (M + 2) * (N + 2) * (O + 2);
-
-    // Alocar memória temporária no CPU
-    float *h_x = new float[size];
-
-    // Copiar o array da GPU para o CPU
-    cudaMemcpy(h_x, d_x, size * sizeof(float), cudaMemcpyDeviceToHost);
-
-    // Imprimir os primeiros 10 valores do array
-    printf("Valores dentro de x na GPU (copiados para CPU):\n");
-    for (int i = 0; i < 10; i++) {
-        printf("x[%d] = %f\n", i, h_x[i]);
-    }
-
-    // Libertar memória temporária
-    delete[] h_x;
-}
-
-//extern "C" void lin_solve_cuda(int M, int N, int O, int b, float* x, float* x0, float a, float c);
-
-// Variaveis externas que vem da main, utilizados para memoria gpu
-// extern float *d_u, *d_v, *d_w, *d_u_prev, *d_v_prev, *d_w_prev;
-// extern float *d_dens, *d_dens_prev;
-
 // ----------------------------------------------------------------------------------------------------------------------------------------------
-
+// Kernel para a função add_source
 __global__ void add_source_kernel(int size, float *x, const float *s, float dt) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-
-    // Atualizar diretamente na memória global
-    if (i < size) {
-        x[i] += dt * s[i];
-    }
+    if (i < size) {x[i] += dt * s[i];}
 }
 
+// Função add_source
 void add_source(int M, int N, int O, float *x, float *s, float dt) {
     int size = (M + 2) * (N + 2) * (O + 2); 
 
-    // Configuração otimizada
+    // Configuração
     int threadsPerBlock = 512;
     int numBlocks = (size + threadsPerBlock - 1) / threadsPerBlock;
 
     // Execução do kernel
     add_source_kernel<<<numBlocks, threadsPerBlock>>>(size, x, s, dt);
 
-    // Sincronizar após o kernel (apenas para debug)
+    // Sincronização
     cudaDeviceSynchronize();
-
-    // Verificar erros
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Erro CUDA: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
-
-__global__ void set_bnd_kernel(
-    int M, int N, int O, int b, float *x) {
-
+// Kernel para a função set_bnd
+__global__ void set_bnd_kernel(int M, int N, int O, int b, float *x) {
     // Índices 3D globais
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j = blockIdx.y * blockDim.y + threadIdx.y;
     int k = blockIdx.z * blockDim.z + threadIdx.z;
 
-    // Trabalhar com as bordas no eixo X
-    if (i == 0) { // Face esquerda
-        x[IX(0, j, k)] = (b == 1) ? -x[IX(1, j, k)] : x[IX(1, j, k)];
-    }
-    if (i == M + 1) { // Face direita
-        x[IX(M + 1, j, k)] = (b == 1) ? -x[IX(M, j, k)] : x[IX(M, j, k)];
-    }
+    // Eixo X
+    if (i == 0) {x[IX(0, j, k)] = (b == 1) ? -x[IX(1, j, k)] : x[IX(1, j, k)];}
+    if (i == M + 1) {x[IX(M + 1, j, k)] = (b == 1) ? -x[IX(M, j, k)] : x[IX(M, j, k)];}
 
-    // Trabalhar com as bordas no eixo Y
-    if (j == 0) { // Face de baixo
-        x[IX(i, 0, k)] = (b == 2) ? -x[IX(i, 1, k)] : x[IX(i, 1, k)];
-    }
-    if (j == N + 1) { // Face de cima
-        x[IX(i, N + 1, k)] = (b == 2) ? -x[IX(i, N, k)] : x[IX(i, N, k)];
-    }
+    // Eixo Y
+    if (j == 0) {x[IX(i, 0, k)] = (b == 2) ? -x[IX(i, 1, k)] : x[IX(i, 1, k)];}
+    if (j == N + 1) {x[IX(i, N + 1, k)] = (b == 2) ? -x[IX(i, N, k)] : x[IX(i, N, k)];}
 
-    // Trabalhar com as bordas no eixo Z
-    if (k == 0) { // Face frontal
-        x[IX(i, j, 0)] = (b == 3) ? -x[IX(i, j, 1)] : x[IX(i, j, 1)];
-    }
-    if (k == O + 1) { // Face traseira
-        x[IX(i, j, O + 1)] = (b == 3) ? -x[IX(i, j, O)] : x[IX(i, j, O)];
-    }
+    // Eixo Z
+    if (k == 0) {x[IX(i, j, 0)] = (b == 3) ? -x[IX(i, j, 1)] : x[IX(i, j, 1)];}
+    if (k == O + 1) {x[IX(i, j, O + 1)] = (b == 3) ? -x[IX(i, j, O)] : x[IX(i, j, O)];}
 
-    // Condições nos cantos (processadas apenas pelo thread (0,0,0))
-    if (i == 0 && j == 0 && k == 0) {
-        x[IX(0, 0, 0)] = 0.33f * (x[IX(1, 0, 0)] + x[IX(0, 1, 0)] + x[IX(0, 0, 1)]);
-    }
+    // Thread (0,0,0) apenas
+    if (i == 0 && j == 0 && k == 0) {x[IX(0, 0, 0)] = 0.33f * (x[IX(1, 0, 0)] + x[IX(0, 1, 0)] + x[IX(0, 0, 1)]);}
 }
 
+// Função set_bnd
 void set_bnd(int M, int N, int O, int b, float *x) {
-    // Configuração de threads e blocos
+    // Configuração
     dim3 threadsPerBlock(8, 8, 8); // 512 threads por bloco
     dim3 numBlocks((M + 7) / 8, (N + 7) / 8, (O + 7) / 8);
 
     // Executar kernel
     set_bnd_kernel<<<numBlocks, threadsPerBlock>>>(M, N, O, b, x);
+
+    // Sincronização
+    cudaDeviceSynchronize();
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
-
+// Kernel para a função lin_solve
 __global__ void lin_solve_kernel(float *x, float *x0, float a, float c, int M, int N, int O, int parity, float *max_change){
     // Índices globais (1..M, 1..N, 1..O)
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
@@ -173,17 +125,11 @@ __global__ void lin_solve_kernel(float *x, float *x0, float a, float c, int M, i
         stride /= 2;
     }
 
-    // Thread 0 do bloco escreve o max local em max_change (global)
-    if (local_id == 0)
-    {
-        atomicMax((int*) max_change, __float_as_int(sdata[0]));
-    }
+    // Thread 0 executa
+    if (local_id == 0){atomicMax((int*) max_change, __float_as_int(sdata[0]));}
 }
 
-// ----------------------------------------------------------------------------
-// Solver que chama o kernel otimizado
-// ----------------------------------------------------------------------------
-
+// Função lin_solve
 void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __restrict__ x0, float a, float c){
     const float tol = 1e-7f;
     const float inv_c = 1.0f / c;
@@ -205,18 +151,10 @@ void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __res
         cudaMemcpy(d_max_change, &max_change, sizeof(float), cudaMemcpyHostToDevice);
 
         // Lançar kernel para paridade 0
-        lin_solve_kernel<<<
-            numBlocks, 
-            threadsPerBlock,
-            threadsPerBlock.x * threadsPerBlock.y * threadsPerBlock.z * sizeof(float)
-        >>>(x, x0, a, inv_c, M, N, O, 0, d_max_change);
+        lin_solve_kernel<<<numBlocks, threadsPerBlock,threadsPerBlock.x * threadsPerBlock.y * threadsPerBlock.z * sizeof(float)>>>(x, x0, a, inv_c, M, N, O, 0, d_max_change);
 
         // Lançar kernel para paridade 1
-        lin_solve_kernel<<<
-            numBlocks, 
-            threadsPerBlock,
-            threadsPerBlock.x * threadsPerBlock.y * threadsPerBlock.z * sizeof(float)
-        >>>(x, x0, a, inv_c, M, N, O, 1, d_max_change);
+        lin_solve_kernel<<<numBlocks, threadsPerBlock, threadsPerBlock.x * threadsPerBlock.y * threadsPerBlock.z * sizeof(float)>>>(x, x0, a, inv_c, M, N, O, 1, d_max_change);
 
         // Uma só sincronização no final
         cudaDeviceSynchronize();
@@ -236,7 +174,7 @@ void lin_solve(int M, int N, int O, int b, float * __restrict__ x, float * __res
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
-
+// Função diffuse
 void diffuse(int M, int N, int O, int b, float *x, float *x0, float diff, float dt) {
     int max = MAX(MAX(M, N), O);
     float a = dt * diff * max * max;
@@ -244,10 +182,10 @@ void diffuse(int M, int N, int O, int b, float *x, float *x0, float diff, float 
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
-
+// Kernel para a função advect_kernel
 __global__ void advect_kernel(int M, int N, int O, int b, float *d, const float *d0, const float *u, const float *v, const float *w, float dt) {
-    // Shared memory para os dados locais
-    __shared__ float s_d0[8][8][8]; // Ajustar para o tamanho do bloco
+    // Shared memory
+    __shared__ float s_d0[8][8][8]; 
     
     // Índices 3D globais
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
@@ -270,7 +208,7 @@ __global__ void advect_kernel(int M, int N, int O, int b, float *d, const float 
 
         // Carregar dados para a memória shared
         s_d0[lx][ly][lz] = d0[idx];
-        __syncthreads(); // Sincronizar antes de usar os dados carregados
+        __syncthreads(); // Sincronizar 
 
         // Calcular novas posições
         float x = i - dtX * u[idx];
@@ -299,6 +237,7 @@ __global__ void advect_kernel(int M, int N, int O, int b, float *d, const float 
     }
 }
 
+// Função advect
 void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v, float *w, float dt) {
     // Configuração de threads e blocos
     dim3 threadsPerBlock(8, 8, 8);
@@ -312,13 +251,13 @@ void advect(int M, int N, int O, int b, float *d, float *d0, float *u, float *v,
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
-
+// Kernel #1 para a função project
 __global__ void project_kernel_1 (int M, int N, int O, float *u, float *v, float *w, float *p, float *div, float h) {
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
     int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
     int k = blockIdx.z * blockDim.z + threadIdx.z + 1;
 
-    if (i > 1 && i <= M && j > 1 && j <= N && k > 1 && k <= O) { // Verificação de bordas
+    if (i > 1 && i <= M && j > 1 && j <= N && k > 1 && k <= O) { 
         int idx = IX(i, j, k);
         float du = u[idx + 1] - u[idx - 1];
         float dv = v[idx + (M + 2)] - v[idx - (M + 2)];
@@ -328,6 +267,7 @@ __global__ void project_kernel_1 (int M, int N, int O, float *u, float *v, float
     }
 }
 
+// Kernel #2 para a função project
 __global__ void project_kernel_2 (int M, int N, int O, float *u, float *v, float *w, float *p) {
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
     int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
@@ -341,23 +281,28 @@ __global__ void project_kernel_2 (int M, int N, int O, float *u, float *v, float
     }
 }
 
-void project(int M, int N, int O, float *u, float *v, float *w, float *p, float *div) {
+// Função project
+void project (int M, int N, int O, float *u, float *v, float *w, float *p, float *div) {
     const float h = -0.5f / MAX(M, MAX(N, O));
 
-    // Configurar blocos e threads
+    // Configuraração
     dim3 threadsPerBlock(8, 8, 8);
     dim3 numBlocks((M + 7) / 8, (N + 7) / 8, (O + 7) / 8);
 
-    // Kernel 1 - Calcular div e inicializar p
+    // Kernel 1
     project_kernel_1<<<numBlocks, threadsPerBlock>>>(M, N, O, u, v, w, p, div, h);
+    
+    // Sincronização
     cudaDeviceSynchronize();
 
     set_bnd(M, N, O, 0, div);
     set_bnd(M, N, O, 0, p);
     lin_solve(M, N, O, 0, p, div, 1, 6);
 
-    // Atualizar as velocidades
+    // Kernel 2
     project_kernel_2<<<numBlocks, threadsPerBlock>>>(M, N, O, u, v, w, p);
+
+    // Sincronização
     cudaDeviceSynchronize();
 
     set_bnd(M, N, O, 1, u);
@@ -366,7 +311,7 @@ void project(int M, int N, int O, float *u, float *v, float *w, float *p, float 
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
-
+// Função dens_step
 void dens_step(int M, int N, int O, float *x, float *x0, float *u, float *v, float *w, float diff, float dt) {
     add_source(M, N, O, x, x0, dt);
     SWAP(x0, x);
@@ -376,7 +321,7 @@ void dens_step(int M, int N, int O, float *x, float *x0, float *u, float *v, flo
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------
-
+// Função vel_step
 void vel_step(int M, int N, int O, float *u, float *v, float *w, float *u0, float *v0, float *w0, float visc, float dt) {
     add_source(M, N, O, u, u0, dt);
     add_source(M, N, O, v, v0, dt);
